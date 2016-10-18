@@ -1,0 +1,22 @@
+# Template file for 'linux-zen'
+pkgname=linux-zen
+version=4.8
+revision=1
+build_style=meta
+homepage="http://www.voidlinux.eu/"
+short_desc="The Linux kernel meta package"
+maintainer="Juan RP <xtraeme@voidlinux.eu>"
+license="Public domain"
+
+case "$XBPS_TARGET_MACHINE" in
+	i686*|x86_64*)
+		depends="linux-zen${version} linux-firmware-amd linux-firmware-intel linux-firmware-nvidia linux-firmware-network dracut"
+		_depends_headers="linux-zen${version}-headers"
+		;;
+	*) ;;
+esac
+
+linux-zen-headers_package() {
+	short_desc="Linux kernel headers meta package"
+	depends="${_depends_headers}"
+}
