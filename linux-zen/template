@@ -17,6 +17,6 @@ case "$XBPS_TARGET_MACHINE" in
 esac
 
 linux-zen-headers_package() {
-	short_desc="Linux kernel headers meta package"
+	short_desc="Zen Linux kernel headers meta package"
 	depends="${_depends_headers}"
 }
