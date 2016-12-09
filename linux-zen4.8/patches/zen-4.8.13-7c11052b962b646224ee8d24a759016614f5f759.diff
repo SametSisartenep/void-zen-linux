@@ -1,5 +1,7 @@
  Documentation/ABI/testing/debugfs-aufs             |    50 +
  Documentation/ABI/testing/sysfs-aufs               |    31 +
+ Documentation/block/00-INDEX                       |     2 +
+ Documentation/block/bfq-iosched.txt                |   516 +
  Documentation/block/queue-sysfs.txt                |    13 +
  Documentation/filesystems/aufs/README              |   392 +
  Documentation/filesystems/aufs/design/01intro.txt  |   157 +
@@ -14,24 +16,24 @@
  Documentation/filesystems/aufs/design/07export.txt |    45 +
  Documentation/filesystems/aufs/design/08shwh.txt   |    39 +
  Documentation/filesystems/aufs/design/10dynop.txt  |    34 +
- Documentation/scheduler/sched-BFS.txt              |   361 +
- Documentation/scheduler/sched-MuQSS.txt            |    78 +
+ Documentation/scheduler/sched-BFS.txt              |   351 +
+ Documentation/scheduler/sched-MuQSS.txt            |   345 +
  Documentation/sysctl/kernel.txt                    |    26 +
  Documentation/tp_smapi.txt                         |   267 +
  MAINTAINERS                                        |    13 +
  Makefile                                           |    12 +-
  arch/powerpc/platforms/cell/spufs/sched.c          |     5 -
- arch/x86/Kconfig                                   |    22 +-
+ arch/x86/Kconfig                                   |    18 +-
  arch/x86/Kconfig.cpu                               |   173 +-
  arch/x86/Makefile                                  |    31 +-
  arch/x86/Makefile_32.cpu                           |    21 +-
  arch/x86/include/asm/module.h                      |    34 +
  block/Kconfig                                      |     1 +
- block/Kconfig.iosched                              |    30 +
+ block/Kconfig.iosched                              |    29 +-
  block/Makefile                                     |     3 +-
  block/bfq-cgroup.c                                 |  1208 +
  block/bfq-ioc.c                                    |    36 +
- block/bfq-iosched.c                                |  5288 +++
+ block/bfq-iosched.c                                |  5291 +++
  block/bfq-sched.c                                  |  1501 +
  block/bfq.h                                        |   886 +
  block/blk-core.c                                   |    21 +-
@@ -43,11 +45,9 @@
  block/blk-stat.h                                   |    18 +
  block/blk-sysfs.c                                  |   151 +
  block/cfq-iosched.c                                |    13 +
- drivers/ata/libata-core.c                          |     4 +
+ drivers/acpi/sleep.c                               |    29 +-
  drivers/block/loop.c                               |    18 +
- drivers/cpufreq/cpufreq_conservative.c             |     6 +
- drivers/cpufreq/cpufreq_ondemand.c                 |     9 +
- drivers/gpu/drm/i915/intel_pm.c                    |     1 -
+ drivers/cpufreq/cpufreq_ondemand.c                 |     4 +
  drivers/input/joydev.c                             |    37 +-
  drivers/input/mouse/synaptics.c                    |     4 +-
  drivers/input/mouse/synaptics.h                    |     1 +
@@ -168,7 +168,7 @@
  fs/exfat/exfat_cache.c                             |   780 +
  fs/exfat/exfat_cache.h                             |    85 +
  fs/exfat/exfat_config.h                            |    69 +
- fs/exfat/exfat_core.c                              |  5114 +++
+ fs/exfat/exfat_core.c                              |  5124 +++
  fs/exfat/exfat_core.h                              |   671 +
  fs/exfat/exfat_data.c                              |    77 +
  fs/exfat/exfat_data.h                              |    58 +
@@ -223,28 +223,32 @@
  include/uapi/linux/aufs_type.h                     |   406 +
  include/uapi/linux/sched.h                         |     9 +-
  include/uapi/linux/vt.h                            |    15 +-
- init/Kconfig                                       |    63 +-
+ init/Kconfig                                       |    61 +-
  init/main.c                                        |     3 +-
+ kernel/Kconfig.hz                                  |    14 +-
  kernel/Makefile                                    |     2 +-
  kernel/delayacct.c                                 |     2 +-
  kernel/exit.c                                      |     2 +-
  kernel/fork.c                                      |     2 +-
- kernel/sched/Makefile                              |    11 +-
- kernel/sched/MuQSS.c                               |  8231 ++++
- kernel/sched/MuQSS.h                               |   277 +
+ kernel/sched/Makefile                              |    13 +-
+ kernel/sched/MuQSS.c                               |  7898 ++++
+ kernel/sched/MuQSS.h                               |   343 +
  kernel/sched/cpufreq.c                             |     4 +
  kernel/sched/cpufreq_schedutil.c                   |     4 +
+ kernel/sched/cputime.c                             |     7 +-
  kernel/sched/fair.c                                |    25 +
- kernel/sched/idle.c                                |     4 +
+ kernel/sched/idle.c                                |    14 +-
+ kernel/sched/sched.h                               |     5 +
  kernel/sched/stats.c                               |     4 +
  kernel/skip_list.c                                 |   148 +
  kernel/sysctl.c                                    |    42 +-
  kernel/task_work.c                                 |     1 +
- kernel/time/Kconfig                                |     2 +-
+ kernel/time/clockevents.c                          |     5 +
  kernel/time/posix-cpu-timers.c                     |    10 +-
+ kernel/time/timer.c                                |     7 +-
  kernel/trace/trace_selftest.c                      |     5 +
  lib/Kconfig                                        |     3 +
- lib/Kconfig.debug                                  |     5 +-
+ lib/Kconfig.debug                                  |     3 +-
  lib/Makefile                                       |     1 +
  lib/wbt.c                                          |   703 +
  mm/Makefile                                        |     2 +-
@@ -256,11 +260,13 @@
  mm/page-writeback.c                                |     9 +
  mm/prfile.c                                        |    86 +
  net/ipv4/Kconfig                                   |     4 +
+ net/ipv6/icmp.c                                    |     6 +-
+ net/packet/af_packet.c                             |    18 +-
  scripts/mkcompile_h                                |     4 +-
  security/commoncap.c                               |     2 +
  security/device_cgroup.c                           |     2 +
  security/security.c                                |    10 +
- 262 files changed, 129508 insertions(+), 560 deletions(-)
+ 268 files changed, 130071 insertions(+), 594 deletions(-)
 
 diff --git a/Documentation/ABI/testing/debugfs-aufs b/Documentation/ABI/testing/debugfs-aufs
 new file mode 100644
@@ -355,6 +361,540 @@ index 0000000000000000..82f9518495eae40e
 +		even if it is the default path.
 +		When the aufs mount option 'noxino' is specified, it
 +		will be empty. About XINO files, see the aufs manual.
+diff --git a/Documentation/block/00-INDEX b/Documentation/block/00-INDEX
+index e55103ace382a093..8d55b4bbb5e2ef03 100644
+--- a/Documentation/block/00-INDEX
++++ b/Documentation/block/00-INDEX
+@@ -1,5 +1,7 @@
+ 00-INDEX
+ 	- This file
++bfq-iosched.txt
++	- BFQ IO scheduler and its tunables
+ biodoc.txt
+ 	- Notes on the Generic Block Layer Rewrite in Linux 2.5
+ biovecs.txt
+diff --git a/Documentation/block/bfq-iosched.txt b/Documentation/block/bfq-iosched.txt
+new file mode 100644
+index 0000000000000000..5ba67af3d3c6ec91
+--- /dev/null
++++ b/Documentation/block/bfq-iosched.txt
+@@ -0,0 +1,516 @@
++BFQ (Budget Fair Queueing)
++==========================
++
++BFQ is a proportional-share I/O scheduler, with some extra
++low-latency capabilities. In addition to cgroups support (blkio or io
++controllers), BFQ's main features are:
++- BFQ guarantees a high system and application responsiveness, and a
++  low latency for time-sensitive applications, such as audio or video
++  players;
++- BFQ distributes bandwidth, and not just time, among processes or
++  groups (switching back to time distribution when needed to keep
++  throughput high).
++
++On average CPUs, the current version of BFQ can handle devices
++performing at most ~30K IOPS; at most ~50 KIOPS on faster CPUs. As a
++reference, 30-50 KIOPS correspond to very high bandwidths with
++sequential I/O (e.g., 8-12 GB/s if I/O requests are 256 KB large), and
++to 120-200 MB/s with 4KB random I/O.
++
++The table of contents follow. Impatients can just jump to Section 3.
++
++CONTENTS
++
++1. When may BFQ be useful?
++ 1-1 Personal systems
++ 1-2 Server systems
++2. How does BFQ work?
++3. What are BFQ's tunable?
++4. BFQ group scheduling
++ 4-1 Service guarantees provided
++ 4-2 Interface
++
++1. When may BFQ be useful?
++==========================
++
++BFQ provides the following benefits on personal and server systems.
++
++1-1 Personal systems
++--------------------
++
++Low latency for interactive applications
++
++Regardless of the actual background workload, BFQ guarantees that, for
++interactive tasks, the storage device is virtually as responsive as if
++it was idle. For example, even if one or more of the following
++background workloads are being executed:
++- one or more large files are being read, written or copied,
++- a tree of source files is being compiled,
++- one or more virtual machines are performing I/O,
++- a software update is in progress,
++- indexing daemons are scanning filesystems and updating their
++  databases,
++starting an application or loading a file from within an application
++takes about the same time as if the storage device was idle. As a
++comparison, with CFQ, NOOP or DEADLINE, and in the same conditions,
++applications experience high latencies, or even become unresponsive
++until the background workload terminates (also on SSDs).
++
++Low latency for soft real-time applications
++
++Also soft real-time applications, such as audio and video
++players/streamers, enjoy a low latency and a low drop rate, regardless
++of the background I/O workload. As a consequence, these applications
++do not suffer from almost any glitch due to the background workload.
++
++Higher speed for code-development tasks
++
++If some additional workload happens to be executed in parallel, then
++BFQ executes the I/O-related components of typical code-development
++tasks (compilation, checkout, merge, ...) much more quickly than CFQ,
++NOOP or DEADLINE.
++
++High throughput
++
++On hard disks, BFQ achieves up to 30% higher throughput than CFQ, and
++up to 150% higher throughput than DEADLINE and NOOP, with all the
++sequential workloads considered in our tests. With random workloads,
++and with all the workloads on flash-based devices, BFQ achieves,
++instead, about the same throughput as the other schedulers.
++
++Strong fairness, bandwidth and delay guarantees
++
++BFQ distributes the device throughput, and not just the device time,
++among I/O-bound applications in proportion their weights, with any
++workload and regardless of the device parameters. From these bandwidth
++guarantees, it is possible to compute tight per-I/O-request delay
++guarantees by a simple formula. If not configured for strict service
++guarantees, BFQ switches to time-based resource sharing (only) for
++applications that would otherwise cause a throughput loss.
++
++1-2 Server systems
++------------------
++
++Most benefits for server systems follow from the same service
++properties as above. In particular, regardless of whether additional,
++possibly heavy workloads are being served, BFQ guarantees:
++
++. audio and video-streaming with zero or very low jitter and drop
++  rate;
++
++. fast retrieval of WEB pages and embedded objects;
++
++. real-time recording of data in live-dumping applications (e.g.,
++  packet logging);
++
++. responsiveness in local and remote access to a server.
++
++
++2. How does BFQ work?
++=====================
++
++BFQ is a proportional-share I/O scheduler, whose general structure,
++plus a lot of code, are borrowed from CFQ.
++
++- Each process doing I/O on a device is associated with a weight and a
++  (bfq_)queue.
++
++- BFQ grants exclusive access to the device, for a while, to one queue
++  (process) at a time, and implements this service model by
++  associating every queue with a budget, measured in number of
++  sectors.
++
++  - After a queue is granted access to the device, the budget of the
++    queue is decremented, on each request dispatch, by the size of the
++    request.
++
++  - The in-service queue is expired, i.e., its service is suspended,
++    only if one of the following events occurs: 1) the queue finishes
++    its budget, 2) the queue empties, 3) a "budget timeout" fires.
++
++    - The budget timeout prevents processes doing random I/O from
++      holding the device for too long and dramatically reducing
++      throughput.
++
++    - Actually, as in CFQ, a queue associated with a process issuing
++      sync requests may not be expired immediately when it empties. In
++      contrast, BFQ may idle the device for a short time interval,
++      giving the process the chance to go on being served if it issues
++      a new request in time. Device idling typically boosts the
++      throughput on rotational devices, if processes do synchronous
++      and sequential I/O. In addition, under BFQ, device idling is
++      also instrumental in guaranteeing the desired throughput
++      fraction to processes issuing sync requests (see the description
++      of the slice_idle tunable in this document, or [1, 2], for more
++      details).
++
++      - With respect to idling for service guarantees, if several
++	processes are competing for the device at the same time, but
++	all processes (and groups, after the following commit) have
++	the same weight, then BFQ guarantees the expected throughput
++	distribution without ever idling the device. Throughput is
++	thus as high as possible in this common scenario.
++
++  - If low-latency mode is enabled (default configuration), BFQ
++    executes some special heuristics to detect interactive and soft
++    real-time applications (e.g., video or audio players/streamers),
++    and to reduce their latency. The most important action taken to
++    achieve this goal is to give to the queues associated with these
++    applications more than their fair share of the device
++    throughput. For brevity, we call just "weight-raising" the whole
++    sets of actions taken by BFQ to privilege these queues. In
++    particular, BFQ provides a milder form of weight-raising for
++    interactive applications, and a stronger form for soft real-time
++    applications.
++
++  - BFQ automatically deactivates idling for queues born in a burst of
++    queue creations. In fact, these queues are usually associated with
++    the processes of applications and services that benefit mostly
++    from a high throughput. Examples are systemd during boot, or git
++    grep.
++
++  - As CFQ, BFQ merges queues performing interleaved I/O, i.e.,
++    performing random I/O that becomes mostly sequential if
++    merged. Differently from CFQ, BFQ achieves this goal with a more
++    reactive mechanism, called Early Queue Merge (EQM). EQM is so
++    responsive in detecting interleaved I/O (cooperating processes),
++    that it enables BFQ to achieve a high throughput, by queue
++    merging, even for queues for which CFQ needs a different
++    mechanism, preemption, to get a high throughput. As such EQM is a
++    unified mechanism to achieve a high throughput with interleaved
++    I/O.
++
++  - Queues are scheduled according to a variant of WF2Q+, named
++    B-WF2Q+, and implemented using an augmented rb-tree to preserve an
++    O(log N) overall complexity.  See [2] for more details. B-WF2Q+ is
++    also ready for hierarchical scheduling. However, for a cleaner
++    logical breakdown, the code that enables and completes
++    hierarchical support is provided in the next commit, which focuses
++    exactly on this feature.
++
++  - B-WF2Q+ guarantees a tight deviation with respect to an ideal,
++    perfectly fair, and smooth service. In particular, B-WF2Q+
++    guarantees that each queue receives a fraction of the device
++    throughput proportional to its weight, even if the throughput
++    fluctuates, and regardless of: the device parameters, the current
++    workload and the budgets assigned to the queue.
++
++  - The last, budget-independence, property (although probably
++    counterintuitive in the first place) is definitely beneficial, for
++    the following reasons:
++
++    - First, with any proportional-share scheduler, the maximum
++      deviation with respect to an ideal service is proportional to
++      the maximum budget (slice) assigned to queues. As a consequence,
++      BFQ can keep this deviation tight not only because of the
++      accurate service of B-WF2Q+, but also because BFQ *does not*
++      need to assign a larger budget to a queue to let the queue
++      receive a higher fraction of the device throughput.
++
++    - Second, BFQ is free to choose, for every process (queue), the
++      budget that best fits the needs of the process, or best
++      leverages the I/O pattern of the process. In particular, BFQ
++      updates queue budgets with a simple feedback-loop algorithm that
++      allows a high throughput to be achieved, while still providing
++      tight latency guarantees to time-sensitive applications. When
++      the in-service queue expires, this algorithm computes the next
++      budget of the queue so as to:
++
++      - Let large budgets be eventually assigned to the queues
++	associated with I/O-bound applications performing sequential
++	I/O: in fact, the longer these applications are served once
++	got access to the device, the higher the throughput is.
++
++      - Let small budgets be eventually assigned to the queues
++	associated with time-sensitive applications (which typically
++	perform sporadic and short I/O), because, the smaller the
++	budget assigned to a queue waiting for service is, the sooner
++	B-WF2Q+ will serve that queue (Subsec 3.3 in [2]).
++
++- If several processes are competing for the device at the same time,
++  but all processes and groups have the same weight, then BFQ
++  guarantees the expected throughput distribution without ever idling
++  the device. It uses preemption instead. Throughput is then much
++  higher in this common scenario.
++
++- ioprio classes are served in strict priority order, i.e.,
++  lower-priority queues are not served as long as there are
++  higher-priority queues.  Among queues in the same class, the
++  bandwidth is distributed in proportion to the weight of each
++  queue. A very thin extra bandwidth is however guaranteed to
++  the Idle class, to prevent it from starving.
++
++
++3. What are BFQ's tunable?
++==========================
++
++The tunables back_seek-max, back_seek_penalty, fifo_expire_async and
++fifo_expire_sync below are the same as in CFQ. Their description is
++just copied from that for CFQ. Some considerations in the description
++of slice_idle are copied from CFQ too.
++
++per-process ioprio and weight
++-----------------------------
++
++Unless the cgroups interface is used, weights can be assigned to
++processes only indirectly, through I/O priorities, and according to
++the relation: weight = (IOPRIO_BE_NR - ioprio) * 10.
++
++slice_idle
++----------
++
++This parameter specifies how long BFQ should idle for next I/O
++request, when certain sync BFQ queues become empty. By default
++slice_idle is a non-zero value. Idling has a double purpose: boosting
++throughput and making sure that the desired throughput distribution is
++respected (see the description of how BFQ works, and, if needed, the
++papers referred there).
++
++As for throughput, idling can be very helpful on highly seeky media
++like single spindle SATA/SAS disks where we can cut down on overall
++number of seeks and see improved throughput.
++
++Setting slice_idle to 0 will remove all the idling on queues and one
++should see an overall improved throughput on faster storage devices
++like multiple SATA/SAS disks in hardware RAID configuration.
++
++So depending on storage and workload, it might be useful to set
++slice_idle=0.  In general for SATA/SAS disks and software RAID of
++SATA/SAS disks keeping slice_idle enabled should be useful. For any
++configurations where there are multiple spindles behind single LUN
++(Host based hardware RAID controller or for storage arrays), setting
++slice_idle=0 might end up in better throughput and acceptable
++latencies.
++
++Idling is however necessary to have service guarantees enforced in
++case of differentiated weights or differentiated I/O-request lengths.
++To see why, suppose that a given BFQ queue A must get several I/O
++requests served for each request served for another queue B. Idling
++ensures that, if A makes a new I/O request slightly after becoming
++empty, then no request of B is dispatched in the middle, and thus A
++does not lose the possibility to get more than one request dispatched
++before the next request of B is dispatched. Note that idling
++guarantees the desired differentiated treatment of queues only in
++terms of I/O-request dispatches. To guarantee that the actual service
++order then corresponds to the dispatch order, the strict_guarantees
++tunable must be set too.
++
++There is an important flipside for idling: apart from the above cases
++where it is beneficial also for throughput, idling can severely impact
++throughput. One important case is random workload. Because of this
++issue, BFQ tends to avoid idling as much as possible, when it is not
++beneficial also for throughput. As a consequence of this behavior, and
++of further issues described for the strict_guarantees tunable,
++short-term service guarantees may be occasionally violated. And, in
++some cases, these guarantees may be more important than guaranteeing
++maximum throughput. For example, in video playing/streaming, a very
++low drop rate may be more important than maximum throughput. In these
++cases, consider setting the strict_guarantees parameter.
++
++strict_guarantees
++-----------------
++
++If this parameter is set (default: unset), then BFQ
++
++- always performs idling when the in-service queue becomes empty;
++
++- forces the device to serve one I/O request at a time, by dispatching a
++  new request only if there is no outstanding request.
++
++In the presence of differentiated weights or I/O-request sizes, both
++the above conditions are needed to guarantee that every BFQ queue
++receives its allotted share of the bandwidth. The first condition is
++needed for the reasons explained in the description of the slice_idle
++tunable.  The second condition is needed because all modern storage
++devices reorder internally-queued requests, which may trivially break
++the service guarantees enforced by the I/O scheduler.
++
++Setting strict_guarantees may evidently affect throughput.
++
++back_seek_max
++-------------
++
++This specifies, given in Kbytes, the maximum "distance" for backward seeking.
++The distance is the amount of space from the current head location to the
++sectors that are backward in terms of distance.
++
++This parameter allows the scheduler to anticipate requests in the "backward"
++direction and consider them as being the "next" if they are within this
++distance from the current head location.
++
++back_seek_penalty
++-----------------
++
++This parameter is used to compute the cost of backward seeking. If the
++backward distance of request is just 1/back_seek_penalty from a "front"
++request, then the seeking cost of two requests is considered equivalent.
++
++So scheduler will not bias toward one or the other request (otherwise scheduler
++will bias toward front request). Default value of back_seek_penalty is 2.
++
++fifo_expire_async
++-----------------
++
++This parameter is used to set the timeout of asynchronous requests. Default
++value of this is 248ms.
++
++fifo_expire_sync
++----------------
++
++This parameter is used to set the timeout of synchronous requests. Default
++value of this is 124ms. In case to favor synchronous requests over asynchronous
++one, this value should be decreased relative to fifo_expire_async.
++
++low_latency
++-----------
++
++This parameter is used to enable/disable BFQ's low latency mode. By
++default, low latency mode is enabled. If enabled, interactive and soft
++real-time applications are privileged and experience a lower latency,
++as explained in more detail in the description of how BFQ works.
++
++timeout_sync
++------------
++
++Maximum amount of device time that can be given to a task (queue) once
++it has been selected for service. On devices with costly seeks,
++increasing this time usually increases maximum throughput. On the
++opposite end, increasing this time coarsens the granularity of the
++short-term bandwidth and latency guarantees, especially if the
++following parameter is set to zero.
++
++max_budget
++----------
++
++Maximum amount of service, measured in sectors, that can be provided
++to a BFQ queue once it is set in service (of course within the limits
++of the above timeout). According to what said in the description of
++the algorithm, larger values increase the throughput in proportion to
++the percentage of sequential I/O requests issued. The price of larger
++values is that they coarsen the granularity of short-term bandwidth
++and latency guarantees.
++
++The default value is 0, which enables auto-tuning: BFQ sets max_budget
++to the maximum number of sectors that can be served during
++timeout_sync, according to the estimated peak rate.
++
++weights
++-------
++
++Read-only parameter, used to show the weights of the currently active
++BFQ queues.
++
++
++wr_ tunables
++------------
++
++BFQ exports a few parameters to control/tune the behavior of
++low-latency heuristics.
++
++wr_coeff
++
++Factor by which the weight of a weight-raised queue is multiplied. If
++the queue is deemed soft real-time, then the weight is further
++multiplied by an additional, constant factor.
++
++wr_max_time
++
++Maximum duration of a weight-raising period for an interactive task
++(ms). If set to zero (default value), then this value is computed
++automatically, as a function of the peak rate of the device. In any
++case, when the value of this parameter is read, it always reports the
++current duration, regardless of whether it has been set manually or
++computed automatically.
++
++wr_max_softrt_rate
++
++Maximum service rate below which a queue is deemed to be associated
++with a soft real-time application, and is then weight-raised
++accordingly (sectors/sec).
++
++wr_min_idle_time
++
++Minimum idle period after which interactive weight-raising may be
++reactivated for a queue (in ms).
++
++wr_rt_max_time
++
++Maximum weight-raising duration for soft real-time queues (in ms). The
++start time from which this duration is considered is automatically
++moved forward if the queue is detected to be still soft real-time
++before the current soft real-time weight-raising period finishes.
++
++wr_min_inter_arr_async
++
++Minimum period between I/O request arrivals after which weight-raising
++may be reactivated for an already busy async queue (in ms).
++
++
++4. Group scheduling with BFQ
++============================
++
++BFQ supports both cgroup-v1 and cgroup-v2 io controllers, namely blkio
++and io. In particular, BFQ supports weight-based proportional
++share.
++
++4-1 Service guarantees provided
++-------------------------------
++
++With BFQ, proportional share means true proportional share of the
++device bandwidth, according to group weights. For example, a group
++with weight 200 gets twice the bandwidth, and not just twice the time,
++of a group with weight 100.
++
++BFQ supports hierarchies (group trees) of any depth. Bandwidth is
++distributed among groups and processes in the expected way: for each
++group, the children of the group share the whole bandwidth of the
++group in proportion to their weights. In particular, this implies
++that, for each leaf group, every process of the group receives the
++same share of the whole group bandwidth, unless the ioprio of the
++process is modified.
++
++The resource-sharing guarantee for a group may partially or totally
++switch from bandwidth to time, if providing bandwidth guarantees to
++the group lowers the throughput too much. This switch occurs on a
++per-process basis: if a process of a leaf group causes throughput loss
++if served in such a way to receive its share of the bandwidth, then
++BFQ switches back to just time-based proportional share for that
++process.
++
++4-2 Interface
++-------------
++
++To get proportional sharing of bandwidth with BFQ for a given device,
++BFQ must of course be the active scheduler for that device.
++
++Within each group directory, the names of the files associated with
++BFQ-specific cgroup parameters and stats begin with the "bfq."
++prefix. So, with cgroups-v1 or cgroups-v2, the full prefix for
++BFQ-specific files is "blkio.bfq." or "io.bfq." For example, the group
++parameter to set the weight of a group with BFQ is blkio.bfq.weight
++or io.bfq.weight.
++
++Parameters to set
++-----------------
++
++For each group, there is only the following parameter to set.
++
++weight (namely blkio.bfq.weight or io.bfq-weight): the weight of the
++group inside its parent. Available values: 1..10000 (default 100). The
++linear mapping between ioprio and weights, described at the beginning
++of the tunable section, is still valid, but all weights higher than
++IOPRIO_BE_NR*10 are mapped to ioprio 0.
++
++
++[1] P. Valente, A. Avanzini, "Evolution of the BFQ Storage I/O
++    Scheduler", Proceedings of the First Workshop on Mobile System
++    Technologies (MST-2015), May 2015.
++    http://algogroup.unimore.it/people/paolo/disk_sched/mst-2015.pdf
++
++[2] P. Valente and M. Andreolini, "Improving Application
++    Responsiveness with the BFQ Disk I/O Scheduler", Proceedings of
++    the 5th Annual International Systems and Storage Conference
++    (SYSTOR '12), June 2012.
++    Slightly extended version:
++    http://algogroup.unimore.it/people/paolo/disk_sched/bfq-v1-suite-
++							results.pdf
 diff --git a/Documentation/block/queue-sysfs.txt b/Documentation/block/queue-sysfs.txt
 index 2a3904030dea5d28..2847219ebd8c99de 100644
 --- a/Documentation/block/queue-sysfs.txt
@@ -1899,10 +2439,10 @@ index 0000000000000000..49afc5899ed052dc
 +regular files only.
 diff --git a/Documentation/scheduler/sched-BFS.txt b/Documentation/scheduler/sched-BFS.txt
 new file mode 100644
-index 0000000000000000..6470f30b082b1651
+index 0000000000000000..c0282002a079131b
 --- /dev/null
 +++ b/Documentation/scheduler/sched-BFS.txt
-@@ -0,0 +1,361 @@
+@@ -0,0 +1,351 @@
 +BFS - The Brain Fuck Scheduler by Con Kolivas.
 +
 +Goals.
@@ -1918,14 +2458,14 @@ index 0000000000000000..6470f30b082b1651
 +
 +Design summary.
 +
-+BFS is best described as a single runqueue, O(log n) insertion, O(1) lookup,
-+earliest effective virtual deadline first design, loosely based on EEVDF
-+(earliest eligible virtual deadline first) and my previous Staircase Deadline
-+scheduler. Each component shall be described in order to understand the
-+significance of, and reasoning for it. The codebase when the first stable
-+version was released was approximately 9000 lines less code than the existing
-+mainline linux kernel scheduler (in 2.6.31). This does not even take into
-+account the removal of documentation and the cgroups code that is not used.
++BFS is best described as a single runqueue, O(n) lookup, earliest effective
++virtual deadline first design, loosely based on EEVDF (earliest eligible virtual
++deadline first) and my previous Staircase Deadline scheduler. Each component
++shall be described in order to understand the significance of, and reasoning for
++it. The codebase when the first stable version was released was approximately
++9000 lines less code than the existing mainline linux kernel scheduler (in
++2.6.31). This does not even take into account the removal of documentation and
++the cgroups code that is not used.
 +
 +Design reasoning.
 +
@@ -1967,13 +2507,12 @@ index 0000000000000000..6470f30b082b1651
 +
 +Task insertion.
 +
-+BFS inserts tasks into each relevant queue as an O(log n) insertion into a
-+customised skip list (as described by William Pugh). At the time of insertion,
-+*every* running queue is checked to see if the newly queued task can run on any
-+idle queue, or preempt the lowest running task on the system. This is how the
-+cross-CPU scheduling of BFS achieves significantly lower latency per extra CPU
-+the system has. In this case the lookup is, in the worst case scenario, O(k)
-+where k is the number of online CPUs on the system.
++BFS inserts tasks into each relevant queue as an O(1) insertion into a double
++linked list. On insertion, *every* running queue is checked to see if the newly
++queued task can run on any idle queue, or preempt the lowest running task on the
++system. This is how the cross-CPU scheduling of BFS achieves significantly lower
++latency per extra CPU the system has. In this case the lookup is, in the worst
++case scenario, O(n) where n is the number of CPUs on the system.
 +
 +Data protection.
 +
@@ -1998,7 +2537,7 @@ index 0000000000000000..6470f30b082b1651
 +Virtual deadline.
 +
 +The key to achieving low latency, scheduling fairness, and "nice level"
-+distribution in BFS is entirely in the virtual deadline mechanism. The related
++distribution in BFS is entirely in the virtual deadline mechanism. The one
 +tunable in BFS is the rr_interval, or "round robin interval". This is the
 +maximum time two SCHED_OTHER (or SCHED_NORMAL, the common scheduling policy)
 +tasks of the same nice level will be running for, or looking at it the other
@@ -2023,7 +2562,7 @@ index 0000000000000000..6470f30b082b1651
 +that it has an earlier virtual deadline than the currently running task. The
 +earlier deadline is the key to which task is next chosen for the first and
 +second cases. Once a task is descheduled, it is put back on the queue, and an
-+O(1) lookup of all queued-but-not-running tasks is done to determine which has
++O(n) lookup of all queued-but-not-running tasks is done to determine which has
 +the earliest deadline and that task is chosen to receive CPU next.
 +
 +The CPU proportion of different nice tasks works out to be approximately the
@@ -2040,40 +2579,26 @@ index 0000000000000000..6470f30b082b1651
 +
 +BFS has 103 priority queues. 100 of these are dedicated to the static priority
 +of realtime tasks, and the remaining 3 are, in order of best to worst priority,
-+SCHED_ISO (isochronous), SCHED_NORMAL/SCHED_BATCH, and SCHED_IDLEPRIO (idle
-+priority scheduling).
++SCHED_ISO (isochronous), SCHED_NORMAL, and SCHED_IDLEPRIO (idle priority
++scheduling). When a task of these priorities is queued, a bitmap of running
++priorities is set showing which of these priorities has tasks waiting for CPU
++time. When a CPU is made to reschedule, the lookup for the next task to get
++CPU time is performed in the following way:
 +
-+When a task of these priorities is queued, it is added to the skiplist with a
-+different sorting value according to the type of task. For realtime tasks and
-+isochronous tasks, it is their static priority. For SCHED_NORMAL and
-+SCHED_BATCH tasks it is their virtual deadline value. For SCHED_IDLEPRIO tasks
-+it is their virtual deadline value offset by an impossibly large value to ensure
-+they never go before normal tasks. When isochronous or idleprio tasks do not
-+meet the conditions that allow them to run with their special scheduling they
-+are queued as per the remainder of the SCHED_NORMAL tasks.
++First the bitmap is checked to see what static priority tasks are queued. If
++any realtime priorities are found, the corresponding queue is checked and the
++first task listed there is taken (provided CPU affinity is suitable) and lookup
++is complete. If the priority corresponds to a SCHED_ISO task, they are also
++taken in FIFO order (as they behave like SCHED_RR). If the priority corresponds
++to either SCHED_NORMAL or SCHED_IDLEPRIO, then the lookup becomes O(n). At this
++stage, every task in the runlist that corresponds to that priority is checked
++to see which has the earliest set deadline, and (provided it has suitable CPU
++affinity) it is taken off the runqueue and given the CPU. If a task has an
++expired deadline, it is taken and the rest of the lookup aborted (as they are
++chosen in FIFO order).
 +
-+Lookup is performed by selecting the very first entry in the "level 0" skiplist
-+as it will always be the lowest priority task having been sorted while being
-+entered into the skiplist. This is usually an O(1) operation, however if there
-+are tasks with limited affinity set and they are not able to run on the current
-+CPU, the next in the list is checked and so on.
-+
-+Thus, the lookup for the common case is O(1) and O(n) in the worst case when
-+the system has nothing but selectively affined tasks that can never run on the
-+current CPU.
-+
-+
-+Task removal.
-+
-+Removal of tasks in the skip list is an O(k) operation where 0 <= k < 16,
-+corresponding with the "levels" in the skip list. 16 was chosen as the upper
-+limit in the skiplist as it guarantees O(log n) insertion for up to 64k
-+currently active tasks and most systems do not usually allow more than 32k
-+tasks, and 16 levels makes the skiplist lookup components fit in 2 cachelines.
-+The skiplist level chosen when inserting a task is pseudo-random but a minor
-+optimisation is used to limit the max level based on the absolute number of
-+queued tasks since high levels afford no advantage at low numbers of queued
-+tasks yet increase overhead.
++Thus, the lookup is O(n) in the worst case only, where n is as described
++earlier, as tasks may be chosen before the whole task list is looked over.
 +
 +
 +Scalability.
@@ -2096,17 +2621,30 @@ index 0000000000000000..6470f30b082b1651
 +The first is the local copy of the running process' data to the CPU it's running
 +on to allow that data to be updated lockless where possible. Then there is
 +deference paid to the last CPU a task was running on, by trying that CPU first
-+when looking for an idle CPU to use the next time it's scheduled.
-+
-+The real cost of migrating a task from one CPU to another is entirely dependant
-+on the cache footprint of the task, how cache intensive the task is, how long
-+it's been running on that CPU to take up the bulk of its cache, how big the CPU
-+cache is, how fast and how layered the CPU cache is, how fast a context switch
-+is... and so on. In other words, it's close to random in the real world where we
-+do more than just one sole workload. The only thing we can be sure of is that
-+it's not free. So BFS uses the principle that an idle CPU is a wasted CPU and
-+utilising idle CPUs is more important than cache locality, and cache locality
-+only plays a part after that.
++when looking for an idle CPU to use the next time it's scheduled. Finally there
++is the notion of cache locality beyond the last running CPU. The sched_domains
++information is used to determine the relative virtual "cache distance" that
++other CPUs have from the last CPU a task was running on. CPUs with shared
++caches, such as SMT siblings, or multicore CPUs with shared caches, are treated
++as cache local. CPUs without shared caches are treated as not cache local, and
++CPUs on different NUMA nodes are treated as very distant. This "relative cache
++distance" is used by modifying the virtual deadline value when doing lookups.
++Effectively, the deadline is unaltered between "cache local" CPUs, doubled for
++"cache distant" CPUs, and quadrupled for "very distant" CPUs. The reasoning
++behind the doubling of deadlines is as follows. The real cost of migrating a
++task from one CPU to another is entirely dependant on the cache footprint of
++the task, how cache intensive the task is, how long it's been running on that
++CPU to take up the bulk of its cache, how big the CPU cache is, how fast and
++how layered the CPU cache is, how fast a context switch is... and so on. In
++other words, it's close to random in the real world where we do more than just
++one sole workload. The only thing we can be sure of is that it's not free. So
++BFS uses the principle that an idle CPU is a wasted CPU and utilising idle CPUs
++is more important than cache locality, and cache locality only plays a part
++after that. Doubling the effective deadline is based on the premise that the
++"cache local" CPUs will tend to work on the same tasks up to double the number
++of cache local CPUs, and once the workload is beyond that amount, it is likely
++that none of the tasks are cache warm anywhere anyway. The quadrupling for NUMA
++is a value I pulled out of my arse.
 +
 +When choosing an idle CPU for a waking task, the cache locality is determined
 +according to where the task last ran and then idle CPUs are ranked from best
@@ -2114,26 +2652,31 @@ index 0000000000000000..6470f30b082b1651
 +node locality and hyperthread sibling business. They are chosen in the
 +following preference (if idle):
 +
-+ * Same thread, idle or busy cache, idle or busy threads
-+ * Other core, same cache, idle or busy cache, idle threads.
-+ * Same node, other CPU, idle cache, idle threads.
-+ * Same node, other CPU, busy cache, idle threads.
-+ * Other core, same cache, busy threads.
-+ * Same node, other CPU, busy threads.
-+ * Other node, other CPU, idle cache, idle threads.
-+ * Other node, other CPU, busy cache, idle threads.
-+ * Other node, other CPU, busy threads.
++* Same core, idle or busy cache, idle threads
++* Other core, same cache, idle or busy cache, idle threads.
++* Same node, other CPU, idle cache, idle threads.
++* Same node, other CPU, busy cache, idle threads.
++* Same core, busy threads.
++* Other core, same cache, busy threads.
++* Same node, other CPU, busy threads.
++* Other node, other CPU, idle cache, idle threads.
++* Other node, other CPU, busy cache, idle threads.
++* Other node, other CPU, busy threads.
 +
 +This shows the SMT or "hyperthread" awareness in the design as well which will
 +choose a real idle core first before a logical SMT sibling which already has
-+tasks on the physical CPU. Early benchmarking of BFS suggested scalability
-+dropped off at the 16 CPU mark. However this benchmarking was performed on an
-+earlier design that was far less scalable than the current one so it's hard to
-+know how scalable it is in terms of number of CPUs (due to the global
-+runqueue). Note that in terms of scalability, the number of _logical_ CPUs
-+matters, not the number of _physical_ CPUs. Thus, a dual (2x) quad core (4X)
-+hyperthreaded (2X) machine is effectively a 16X. Newer benchmark results are
-+very promising indeed. Benchmark contributions are most welcome.
++tasks on the physical CPU.
++
++Early benchmarking of BFS suggested scalability dropped off at the 16 CPU mark.
++However this benchmarking was performed on an earlier design that was far less
++scalable than the current one so it's hard to know how scalable it is in terms
++of both CPUs (due to the global runqueue) and heavily loaded machines (due to
++O(n) lookup) at this stage. Note that in terms of scalability, the number of
++_logical_ CPUs matters, not the number of _physical_ CPUs. Thus, a dual (2x)
++quad core (4X) hyperthreaded (2X) machine is effectively a 16X. Newer benchmark
++results are very promising indeed, without needing to tweak any knobs, features
++or options. Benchmark contributions are most welcome.
++
 +
 +Features
 +
@@ -2146,43 +2689,30 @@ index 0000000000000000..6470f30b082b1651
 +to this, BFS also uses sub-tick accounting. What BFS does _not_ now feature is
 +support for CGROUPS. The average user should neither need to know what these
 +are, nor should they need to be using them to have good desktop behaviour.
-+Rudimentary support for the CPU controller CGROUP in the form of filesystem
-+stubs for the expected CGROUP structure to allow applications that demand their
-+presence to work but they do not have any functionality.
 +
-+There are two "scheduler" tunables, the round robin interval and the
-+interactive flag. These can be accessed in
++rr_interval
++
++There is only one "scheduler" tunable, the round robin interval. This can be
++accessed in
 +
 +	/proc/sys/kernel/rr_interval
-+	/proc/sys/kernel/interactive
 +
-+rr_interval value
-+
-+The value is in milliseconds, and the default value is set to 6ms. Valid values
-+are from 1 to 1000. Decreasing the value will decrease latencies at the cost of
-+decreasing throughput, while increasing it will improve throughput, but at the
-+cost of worsening latencies. The accuracy of the rr interval is limited by HZ
-+resolution of the kernel configuration. Thus, the worst case latencies are
-+usually slightly higher than this actual value. BFS uses "dithering" to try and
-+minimise the effect the Hz limitation has. The default value of 6 is not an
-+arbitrary one. It is based on the fact that humans can detect jitter at
-+approximately 7ms, so aiming for much lower latencies is pointless under most
-+circumstances. It is worth noting this fact when comparing the latency
-+performance of BFS to other schedulers. Worst case latencies being higher than
-+7ms are far worse than average latencies not being in the microsecond range.
-+Experimentation has shown that rr intervals being increased up to 300 can
-+improve throughput but beyond that, scheduling noise from elsewhere prevents
-+further demonstrable throughput.
-+
-+interactive flag
-+
-+This is a simple boolean that can be set to 1 or 0, set to 1 by default. This
-+sacrifices some of the interactive performance by giving tasks a degree of
-+soft affinity for logical CPUs when it will lead to improved throughput, but
-+enabling it also sacrifices the completely deterministic nature with respect
-+to latency that BFS otherwise normally provides, and subsequently leads to
-+slightly higher latencies and a noticeably less interactive system.
-+
++The value is in milliseconds, and the default value is set to 6 on a
++uniprocessor machine, and automatically set to a progressively higher value on
++multiprocessor machines. The reasoning behind increasing the value on more CPUs
++is that the effective latency is decreased by virtue of there being more CPUs on
++BFS (for reasons explained above), and increasing the value allows for less
++cache contention and more throughput. Valid values are from 1 to 1000
++Decreasing the value will decrease latencies at the cost of decreasing
++throughput, while increasing it will improve throughput, but at the cost of
++worsening latencies. The accuracy of the rr interval is limited by HZ resolution
++of the kernel configuration. Thus, the worst case latencies are usually slightly
++higher than this actual value. The default value of 6 is not an arbitrary one.
++It is based on the fact that humans can detect jitter at approximately 7ms, so
++aiming for much lower latencies is pointless under most circumstances. It is
++worth noting this fact when comparing the latency performance of BFS to other
++schedulers. Worst case latencies being higher than 7ms are far worse than
++average latencies not being in the microsecond range.
 +
 +Isochronous scheduling.
 +
@@ -2263,18 +2793,19 @@ index 0000000000000000..6470f30b082b1651
 +"cpu usage".
 +
 +
-+Con Kolivas <kernel@kolivas.org> Tue, 5 Apr 2011
++Con Kolivas <kernel@kolivas.org> Fri Aug 27 2010
 diff --git a/Documentation/scheduler/sched-MuQSS.txt b/Documentation/scheduler/sched-MuQSS.txt
 new file mode 100644
-index 0000000000000000..2521d1ad004e5824
+index 0000000000000000..bbd6980a0bae96e7
 --- /dev/null
 +++ b/Documentation/scheduler/sched-MuQSS.txt
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,345 @@
 +MuQSS - The Multiple Queue Skiplist Scheduler by Con Kolivas.
 +
-+See sched-BFS.txt for basic design; MuQSS is a per-cpu runqueue variant with
++MuQSS is a per-cpu runqueue variant of the original BFS scheduler with
 +one 8 level skiplist per runqueue, and fine grained locking for much more
 +scalability.
++
 +
 +Goals.
 +
@@ -2291,11 +2822,11 @@ index 0000000000000000..2521d1ad004e5824
 +Design summary.
 +
 +MuQSS is best described as per-cpu multiple runqueue, O(log n) insertion, O(1)
-+lookup, earliest effective virtual deadline first design, loosely based on EEVDF
-+(earliest eligible virtual deadline first) and my previous Staircase Deadline
-+scheduler, and evolved from the single runqueue O(n) BFS scheduler. Each
-+component shall be described in order to understand the significance of, and
-+reasoning for it.
++lookup, earliest effective virtual deadline first tickless design, loosely based
++on EEVDF (earliest eligible virtual deadline first) and my previous Staircase
++Deadline scheduler, and evolved from the single runqueue O(n) BFS scheduler.
++Each component shall be described in order to understand the significance of,
++and reasoning for it.
 +
 +
 +Design reasoning.
@@ -2338,16 +2869,282 @@ index 0000000000000000..2521d1ad004e5824
 +happen by virtue of its choices.
 +
 +
-+Design:
++Design details.
 +
-+MuQSS is an 8 level skip list per runqueue variant of BFS.
++Custom skip list implementation:
 +
-+See sched-BFS.txt for some of the shared design details.
++To avoid the overhead of building up and tearing down skip list structures,
++the variant used by MuQSS has a number of optimisations making it specific for
++its use case in the scheduler. It uses static arrays of 8 'levels' instead of
++building up and tearing down structures dynamically. This makes each runqueue
++only scale O(log N) up to 256 tasks. However as there is one runqueue per CPU
++it means that it scales O(log N) up to 256 x number of logical CPUs which is
++far beyond the realistic task limits each CPU could handle. By being 8 levels
++it also makes the array exactly one cacheline in size. Additionally, each
++skip list node is bidirectional making insertion and removal amortised O(1),
++being O(k) where k is 1-8. Uniquely, we are only ever interested in the very
++first entry in each list at all times with MuQSS, so there is never a need to
++do a search and thus look up is always O(1).
 +
-+Documentation yet to be completed.
++Task insertion:
++
++MuQSS inserts tasks into a per CPU runqueue as an O(log N) insertion into
++a custom skip list as described above (based on the original design by William
++Pugh). Insertion is ordered in such a way that there is never a need to do a
++search by ordering tasks according to static priority primarily, and then
++virtual deadline at the time of insertion.
++
++Niffies:
++
++Niffies are a monotonic forward moving timer not unlike the "jiffies" but are
++of nanosecond resolution. Niffies are calculated per-runqueue from the high
++resolution TSC timers, and in order to maintain fairness are synchronised
++between CPUs whenever both runqueues are locked concurrently.
++
++Virtual deadline:
++
++The key to achieving low latency, scheduling fairness, and "nice level"
++distribution in MuQSS is entirely in the virtual deadline mechanism. The one
++tunable in MuQSS is the rr_interval, or "round robin interval". This is the
++maximum time two SCHED_OTHER (or SCHED_NORMAL, the common scheduling policy)
++tasks of the same nice level will be running for, or looking at it the other
++way around, the longest duration two tasks of the same nice level will be
++delayed for. When a task requests cpu time, it is given a quota (time_slice)
++equal to the rr_interval and a virtual deadline. The virtual deadline is
++offset from the current time in niffies by this equation:
++
++	niffies + (prio_ratio * rr_interval)
++
++The prio_ratio is determined as a ratio compared to the baseline of nice -20
++and increases by 10% per nice level. The deadline is a virtual one only in that
++no guarantee is placed that a task will actually be scheduled by this time, but
++it is used to compare which task should go next. There are three components to
++how a task is next chosen. First is time_slice expiration. If a task runs out
++of its time_slice, it is descheduled, the time_slice is refilled, and the
++deadline reset to that formula above. Second is sleep, where a task no longer
++is requesting CPU for whatever reason. The time_slice and deadline are _not_
++adjusted in this case and are just carried over for when the task is next
++scheduled. Third is preemption, and that is when a newly waking task is deemed
++higher priority than a currently running task on any cpu by virtue of the fact
++that it has an earlier virtual deadline than the currently running task. The
++earlier deadline is the key to which task is next chosen for the first and
++second cases.
++
++The CPU proportion of different nice tasks works out to be approximately the
++
++	(prio_ratio difference)^2
++
++The reason it is squared is that a task's deadline does not change while it is
++running unless it runs out of time_slice. Thus, even if the time actually
++passes the deadline of another task that is queued, it will not get CPU time
++unless the current running task deschedules, and the time "base" (niffies) is
++constantly moving.
++
++Task lookup:
++
++As tasks are already pre-ordered according to anticipated scheduling order in
++the skip lists, lookup for the next suitable task per-runqueue is always a
++matter of simply selecting the first task in the 0th level skip list entry.
++In order to maintain optimal latency and fairness across CPUs, MuQSS does a
++novel examination of every other runqueue in cache locality order, choosing the
++best task across all runqueues. This provides near-determinism of how long any
++task across the entire system may wait before receiving CPU time. The other
++runqueues are first examine lockless and then trylocked to minimise the
++potential lock contention if they are likely to have a suitable better task.
++Each other runqueue lock is only held for as long as it takes to examine the
++entry for suitability. In "interactive" mode, the default setting, MuQSS will
++look for the best deadline task across all CPUs, while in !interactive mode,
++it will only select a better deadline task from another CPU if it is more
++heavily laden than the current one.
++
++Lookup is therefore O(k) where k is number of CPUs.
 +
 +
-+Con Kolivas <kernel@kolivas.org> Sun, 2nd October 2016
++Latency.
++
++Through the use of virtual deadlines to govern the scheduling order of normal
++tasks, queue-to-activation latency per runqueue is guaranteed to be bound by
++the rr_interval tunable which is set to 6ms by default. This means that the
++longest a CPU bound task will wait for more CPU is proportional to the number
++of running tasks and in the common case of 0-2 running tasks per CPU, will be
++under the 7ms threshold for human perception of jitter. Additionally, as newly
++woken tasks will have an early deadline from their previous runtime, the very
++tasks that are usually latency sensitive will have the shortest interval for
++activation, usually preempting any existing CPU bound tasks.
++
++Tickless expiry:
++
++A feature of MuQSS is that it is not tied to the resolution of the chosen tick
++rate in Hz, instead depending entirely on the high resolution timers where
++possible for sub-millisecond accuracy on timeouts regarless of the underlying
++tick rate. This allows MuQSS to be run with the low overhead of low Hz rates
++such as 100 by default, benefiting from the improved throughput and lower
++power usage it provides. Another advantage of this approach is that in
++combination with the Full No HZ option, which disables ticks on running task
++CPUs instead of just idle CPUs, the tick can be disabled at all times
++regardless of how many tasks are running instead of being limited to just one
++running task. Note that this option is NOT recommended for regular desktop
++users.
++
++
++Scalability and balancing.
++
++Unlike traditional approaches where balancing is a combination of CPU selection
++at task wakeup and intermittent balancing based on a vast array of rules set
++according to architecture, busyness calculations and special case management,
++MuQSS indirectly balances on the fly at task wakeup and next task selection.
++During initialisation, MuQSS creates a cache coherency ordered list of CPUs for
++each logical CPU and uses this to aid task/CPU selection when CPUs are busy.
++Additionally it selects any idle CPUs, if they are available, at any time over
++busy CPUs according to the following preference:
++
++ * Same thread, idle or busy cache, idle or busy threads
++ * Other core, same cache, idle or busy cache, idle threads.
++ * Same node, other CPU, idle cache, idle threads.
++ * Same node, other CPU, busy cache, idle threads.
++ * Other core, same cache, busy threads.
++ * Same node, other CPU, busy threads.
++ * Other node, other CPU, idle cache, idle threads.
++ * Other node, other CPU, busy cache, idle threads.
++ * Other node, other CPU, busy threads.
++
++Mux is therefore SMT, MC and Numa aware without the need for extra
++intermittent balancing to maintain CPUs busy and make the most of cache
++coherency.
++
++
++Features
++
++As the initial prime target audience for MuQSS was the average desktop user, it
++was designed to not need tweaking, tuning or have features set to obtain benefit
++from it. Thus the number of knobs and features has been kept to an absolute
++minimum and should not require extra user input for the vast majority of cases.
++There are 3 optional tunables, and 2 extra scheduling policies. The rr_interval,
++interactive, and iso_cpu tunables, and the SCHED_ISO and SCHED_IDLEPRIO
++policies. In addition to this, MuQSS also uses sub-tick accounting. What MuQSS
++does _not_ now feature is support for CGROUPS. The average user should neither
++need to know what these are, nor should they need to be using them to have good
++desktop behaviour. However since some applications refuse to work without
++cgroups, one can enable them with MuQSS as a stub and the filesystem will be
++created which will allow the applications to work.
++
++rr_interval:
++
++	/proc/sys/kernel/rr_interval
++
++The value is in milliseconds, and the default value is set to 6. Valid values
++are from 1 to 1000 Decreasing the value will decrease latencies at the cost of
++decreasing throughput, while increasing it will improve throughput, but at the
++cost of worsening latencies. It is based on the fact that humans can detect
++jitter at approximately 7ms, so aiming for much lower latencies is pointless
++under most circumstances. It is worth noting this fact when comparing the
++latency performance of MuQSS to other schedulers. Worst case latencies being
++higher than 7ms are far worse than average latencies not being in the
++microsecond range.
++
++interactive:
++
++	/proc/sys/kernel/interactive
++
++The value is a simple boolean of 1 for on and 0 for off and is set to on by
++default. Disabling this will disable the near-determinism of MuQSS when
++selecting the next task by not examining all CPUs for the earliest deadline
++task, or which CPU to wake to, instead prioritising CPU balancing for improved
++throughput. Latency will still be bound by rr_interval, but on a per-CPU basis
++instead of across the whole system.
++
++Isochronous scheduling:
++
++Isochronous scheduling is a unique scheduling policy designed to provide
++near-real-time performance to unprivileged (ie non-root) users without the
++ability to starve the machine indefinitely. Isochronous tasks (which means
++"same time") are set using, for example, the schedtool application like so:
++
++	schedtool -I -e amarok
++
++This will start the audio application "amarok" as SCHED_ISO. How SCHED_ISO works
++is that it has a priority level between true realtime tasks and SCHED_NORMAL
++which would allow them to preempt all normal tasks, in a SCHED_RR fashion (ie,
++if multiple SCHED_ISO tasks are running, they purely round robin at rr_interval
++rate). However if ISO tasks run for more than a tunable finite amount of time,
++they are then demoted back to SCHED_NORMAL scheduling. This finite amount of
++time is the percentage of CPU available per CPU, configurable as a percentage in
++the following "resource handling" tunable (as opposed to a scheduler tunable):
++
++iso_cpu:
++
++	/proc/sys/kernel/iso_cpu
++
++and is set to 70% by default. It is calculated over a rolling 5 second average
++Because it is the total CPU available, it means that on a multi CPU machine, it
++is possible to have an ISO task running as realtime scheduling indefinitely on
++just one CPU, as the other CPUs will be available. Setting this to 100 is the
++equivalent of giving all users SCHED_RR access and setting it to 0 removes the
++ability to run any pseudo-realtime tasks.
++
++A feature of MuQSS is that it detects when an application tries to obtain a
++realtime policy (SCHED_RR or SCHED_FIFO) and the caller does not have the
++appropriate privileges to use those policies. When it detects this, it will
++give the task SCHED_ISO policy instead. Thus it is transparent to the user.
++
++
++Idleprio scheduling:
++
++Idleprio scheduling is a scheduling policy designed to give out CPU to a task
++_only_ when the CPU would be otherwise idle. The idea behind this is to allow
++ultra low priority tasks to be run in the background that have virtually no
++effect on the foreground tasks. This is ideally suited to distributed computing
++clients (like setiathome, folding, mprime etc) but can also be used to start a
++video encode or so on without any slowdown of other tasks. To avoid this policy
++from grabbing shared resources and holding them indefinitely, if it detects a
++state where the task is waiting on I/O, the machine is about to suspend to ram
++and so on, it will transiently schedule them as SCHED_NORMAL. Once a task has
++been scheduled as IDLEPRIO, it cannot be put back to SCHED_NORMAL without
++superuser privileges since it is effectively a lower scheduling policy. Tasks
++can be set to start as SCHED_IDLEPRIO with the schedtool command like so:
++
++schedtool -D -e ./mprime
++
++Subtick accounting:
++
++It is surprisingly difficult to get accurate CPU accounting, and in many cases,
++the accounting is done by simply determining what is happening at the precise
++moment a timer tick fires off. This becomes increasingly inaccurate as the timer
++tick frequency (HZ) is lowered. It is possible to create an application which
++uses almost 100% CPU, yet by being descheduled at the right time, records zero
++CPU usage. While the main problem with this is that there are possible security
++implications, it is also difficult to determine how much CPU a task really does
++use. Mux uses sub-tick accounting from the TSC clock to determine real CPU
++usage. Thus, the amount of CPU reported as being used by MuQSS will more
++accurately represent how much CPU the task itself is using (as is shown for
++example by the 'time' application), so the reported values may be quite
++different to other schedulers. When comparing throughput of MuQSS to other
++designs, it is important to compare the actual completed work in terms of total
++wall clock time taken and total work done, rather than the reported "cpu usage".
++
++Symmetric MultiThreading (SMT) aware nice:
++
++SMT, a.k.a. hyperthreading, is a very common feature on modern CPUs. While the
++logical CPU count rises by adding thread units to each CPU core, allowing more
++than one task to be run simultaneously on the same core, the disadvantage of it
++is that the CPU power is shared between the tasks, not summating to the power
++of two CPUs. The practical upshot of this is that two tasks running on
++separate threads of the same core run significantly slower than if they had one
++core each to run on. While smart CPU selection allows each task to have a core
++to itself whenever available (as is done on MuQSS), it cannot offset the
++slowdown that occurs when the cores are all loaded and only a thread is left.
++Most of the time this is harmless as the CPU is effectively overloaded at this
++point and the extra thread is of benefit. However when running a niced task in
++the presence of an un-niced task (say nice 19 v nice 0), the nice task gets
++precisely the same amount of CPU power as the unniced one. MuQSS has an
++optional configuration feature known as SMT-NICE which selectively idles the
++secondary niced thread for a period proportional to the nice difference,
++allowing CPU distribution according to nice level to be maintained, at the
++expense of a small amount of extra overhead. If this is configured in on a
++machine without SMT threads, the overhead is minimal.
++
++
++Con Kolivas <kernel@kolivas.org> Sat, 29th October 2016
 diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
 index ffab8b5caa603ddb..01e0a4a861e3d39d 100644
 --- a/Documentation/sysctl/kernel.txt
@@ -2704,13 +3501,13 @@ index babaf8261941c48f..69604e41cb67ddb2 100644
  M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
  W:	http://miguelojeda.es/auxdisplay.htm
 diff --git a/Makefile b/Makefile
-index 82a36ab540a4408d..45a506de81cc7adb 100644
+index b38abe9adef88f85..85d8c434606d0f8e 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,8 +1,8 @@
  VERSION = 4
  PATCHLEVEL = 8
- SUBLEVEL = 4
+ SUBLEVEL = 13
 -EXTRAVERSION =
 -NAME = Psychotic Stoned Sheep
 +EXTRAVERSION = -zen
@@ -2718,7 +3515,7 @@ index 82a36ab540a4408d..45a506de81cc7adb 100644
  
  # *DOCUMENTATION*
  # To see a list of typical targets execute "make help"
-@@ -612,6 +612,12 @@ endif # $(dot-config)
+@@ -613,6 +613,12 @@ endif # $(dot-config)
  # Defaults to vmlinux, but the arch makefile usually adds further targets
  all: vmlinux
  
@@ -2731,7 +3528,7 @@ index 82a36ab540a4408d..45a506de81cc7adb 100644
  # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
  # values of the respective KBUILD_* variables
  ARCH_CPPFLAGS :=
-@@ -624,6 +630,8 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
+@@ -626,6 +632,8 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
  
  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
  KBUILD_CFLAGS	+= -Os
@@ -2757,7 +3554,7 @@ index 460f5f31d5cb01cf..eeb3e32d6c86b24a 100644
   * tick for every 10 CPU scheduler ticks.
   */
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2a1f0ce7c59acac6..1fc4c59b91c11be8 100644
+index 2a1f0ce7c59acac6..7767a5fd989d7733 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
 @@ -914,10 +914,26 @@ config SCHED_SMT
@@ -2788,24 +3585,6 @@ index 2a1f0ce7c59acac6..1fc4c59b91c11be8 100644
  config SCHED_MC
  	def_bool y
  	prompt "Multi-core scheduler support"
-@@ -2036,7 +2052,7 @@ config HOTPLUG_CPU
- config BOOTPARAM_HOTPLUG_CPU0
- 	bool "Set default setting of cpu0_hotpluggable"
- 	default n
--	depends on HOTPLUG_CPU
-+	depends on HOTPLUG_CPU && !SCHED_MUQSS
- 	---help---
- 	  Set whether default state of cpu0_hotpluggable is on or off.
- 
-@@ -2065,7 +2081,7 @@ config BOOTPARAM_HOTPLUG_CPU0
- config DEBUG_HOTPLUG_CPU0
- 	def_bool n
- 	prompt "Debug CPU0 hotplug"
--	depends on HOTPLUG_CPU
-+	depends on HOTPLUG_CPU && !SCHED_MUQSS
- 	---help---
- 	  Enabling this option offlines CPU0 (if CPU0 can be offlined) as
- 	  soon as possible and boots up userspace with CPU0 offlined. User
 diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
 index 3ba5ff2f2d082b36..f7b401627de68598 100644
 --- a/arch/x86/Kconfig.cpu
@@ -3214,24 +3993,21 @@ index 161491d0a879ed11..6da79e670709c327 100644
  	 Provide block layer support for the kernel.
  
 diff --git a/block/Kconfig.iosched b/block/Kconfig.iosched
-index 421bef9c4c48d26c..6d9257924ddfa0a3 100644
+index 421bef9c4c48d26c..48145be759bbe7aa 100644
 --- a/block/Kconfig.iosched
 +++ b/block/Kconfig.iosched
-@@ -39,6 +39,25 @@ config CFQ_GROUP_IOSCHED
+@@ -39,9 +39,25 @@ config CFQ_GROUP_IOSCHED
  	---help---
  	  Enable group IO scheduling in CFQ.
  
 +config IOSCHED_BFQ
 +	tristate "BFQ I/O scheduler"
-+	default n
++	default y
 +	---help---
-+	  The BFQ I/O scheduler tries to distribute bandwidth among
-+	  all processes according to their weights.
-+	  It aims at distributing the bandwidth as desired, independently of
-+	  the disk parameters and with any workload. It also tries to
-+	  guarantee low latency to interactive and soft real-time
-+	  applications. If compiled built-in (saying Y here), BFQ can
-+	  be configured to support hierarchical scheduling.
++	The BFQ I/O scheduler distributes bandwidth among all
++	processes according to their weights, regardless of the
++	device parameters and with any workload. It also guarantees
++	a low latency to interactive and soft real-time applications.
 +
 +config BFQ_GROUP_IOSCHED
 +	bool "BFQ hierarchical scheduling support"
@@ -3242,8 +4018,12 @@ index 421bef9c4c48d26c..6d9257924ddfa0a3 100644
 +
  choice
  	prompt "Default I/O scheduler"
- 	default DEFAULT_CFQ
-@@ -52,6 +71,16 @@ choice
+-	default DEFAULT_CFQ
++	default DEFAULT_BFQ
+ 	help
+ 	  Select the I/O scheduler which will be used by default for all
+ 	  block devices.
+@@ -52,6 +68,16 @@ choice
  	config DEFAULT_CFQ
  		bool "CFQ" if IOSCHED_CFQ=y
  
@@ -3260,7 +4040,7 @@ index 421bef9c4c48d26c..6d9257924ddfa0a3 100644
  	config DEFAULT_NOOP
  		bool "No-op"
  
-@@ -61,6 +90,7 @@ config DEFAULT_IOSCHED
+@@ -61,6 +87,7 @@ config DEFAULT_IOSCHED
  	string
  	default "deadline" if DEFAULT_DEADLINE
  	default "cfq" if DEFAULT_CFQ
@@ -4547,12 +5327,12 @@ index 0000000000000000..fb7bb8f08b75ae47
 +}
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
 new file mode 100644
-index 0000000000000000..eef6ff49c4d0c47a
+index 0000000000000000..0f3081dbd497462c
 --- /dev/null
 +++ b/block/bfq-iosched.c
-@@ -0,0 +1,5288 @@
+@@ -0,0 +1,5291 @@
 +/*
-+ * Budget Fair Queueing (BFQ) disk scheduler.
++ * Budget Fair Queueing (BFQ) I/O scheduler.
 + *
 + * Based on ideas and code from CFQ:
 + * Copyright (C) 2003 Jens Axboe <axboe@kernel.dk>
@@ -4630,19 +5410,19 @@ index 0000000000000000..eef6ff49c4d0c47a
 +static const u64 bfq_fifo_expire[2] = { NSEC_PER_SEC / 4, NSEC_PER_SEC / 8 };
 +
 +/* Maximum backwards seek, in KiB. */
-+static const int bfq_back_max = 16 * 1024;
++static const int bfq_back_max = (16 * 1024);
 +
 +/* Penalty of a backwards seek, in number of sectors. */
 +static const int bfq_back_penalty = 2;
 +
 +/* Idling period duration, in ns. */
-+static u32 bfq_slice_idle = NSEC_PER_SEC / 125;
++static u32 bfq_slice_idle = (NSEC_PER_SEC / 125);
 +
 +/* Minimum number of assigned budgets for which stats are safe to compute. */
 +static const int bfq_stats_min_budgets = 194;
 +
 +/* Default maximum budget values, in sectors and number of requests. */
-+static const int bfq_default_max_budget = 16 * 1024;
++static const int bfq_default_max_budget = (16 * 1024);
 +
 +/*
 + * Async to sync throughput distribution is controlled as follows:
@@ -4652,7 +5432,7 @@ index 0000000000000000..eef6ff49c4d0c47a
 +static const int bfq_async_charge_factor = 10;
 +
 +/* Default timeout values, in jiffies, approximating CFQ defaults. */
-+static const int bfq_timeout = HZ / 8;
++static const int bfq_timeout = (HZ / 8);
 +
 +struct kmem_cache *bfq_pool;
 +
@@ -4670,7 +5450,7 @@ index 0000000000000000..eef6ff49c4d0c47a
 +/* Min number of samples required to perform peak-rate update */
 +#define BFQ_RATE_MIN_SAMPLES	32
 +/* Min observation time interval required to perform a peak-rate update (ns) */
-+#define BFQ_RATE_MIN_INTERVAL	300*NSEC_PER_MSEC
++#define BFQ_RATE_MIN_INTERVAL	(300*NSEC_PER_MSEC)
 +/* Target observation time interval for a peak-rate update (ns) */
 +#define BFQ_RATE_REF_INTERVAL	NSEC_PER_SEC
 +
@@ -6732,9 +7512,13 @@ index 0000000000000000..eef6ff49c4d0c47a
 +			 * not only expires, but also remains with no
 +			 * request.
 +			 */
-+			bfqq->last_wr_start_finish += jiffies -
-+				max_t(unsigned long, bfqq->last_wr_start_finish,
-+				      bfqq->budget_timeout);
++			if (time_after(bfqq->budget_timeout,
++				       bfqq->last_wr_start_finish))
++				bfqq->last_wr_start_finish +=
++					jiffies - bfqq->budget_timeout;
++			else
++				bfqq->last_wr_start_finish = jiffies;
++
 +			if (time_is_after_jiffies(bfqq->last_wr_start_finish)) {
 +			       pr_crit(
 +			       "BFQ WARNING:last %lu budget %lu jiffies %lu",
@@ -8817,8 +9601,7 @@ index 0000000000000000..eef6ff49c4d0c47a
 +
 +	bfq_add_request(rq);
 +
-+	rq->fifo_time = ktime_get_ns() +
-+	  jiffies_to_nsecs(bfqd->bfq_fifo_expire[rq_is_sync(rq)]);
++	rq->fifo_time = ktime_get_ns() + bfqd->bfq_fifo_expire[rq_is_sync(rq)];
 +	list_add_tail(&rq->queuelist, &bfqq->fifo);
 +
 +	bfq_rq_enqueued(bfqd, bfqq, rq);
@@ -9762,7 +10545,7 @@ index 0000000000000000..eef6ff49c4d0c47a
 +static int __init bfq_init(void)
 +{
 +	int ret;
-+	char msg[50] = "BFQ I/O-scheduler: v8r4";
++	char msg[50] = "BFQ I/O-scheduler: v8r5";
 +
 +#ifdef CONFIG_BFQ_GROUP_IOSCHED
 +	ret = blkcg_policy_register(&blkcg_policy_bfq);
@@ -11348,12 +12131,12 @@ index 0000000000000000..45d63d3ff9c6a8d7
 +}
 diff --git a/block/bfq.h b/block/bfq.h
 new file mode 100644
-index 0000000000000000..ea1e7d8527076f8f
+index 0000000000000000..b80abe0e3586764f
 --- /dev/null
 +++ b/block/bfq.h
 @@ -0,0 +1,886 @@
 +/*
-+ * BFQ-v8r4 for 4.8.0: data structures and common functions prototypes.
++ * BFQ-v8r5 for 4.8.0: data structures and common functions prototypes.
 + *
 + * Based on ideas and code from CFQ:
 + * Copyright (C) 2003 Jens Axboe <axboe@kernel.dk>
@@ -13104,22 +13887,59 @@ index 5e24d880306c2aa3..f336dcbedfabc846 100644
  	 * Drop reference to queues.  New queues will be assigned in new
  	 * group upon arrival of fresh requests.
  	 */
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 223a770f78f36557..07da600b04e43a21 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -2173,7 +2173,11 @@ static int ata_dev_config_ncq(struct ata_device *dev,
- 		return 0;
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index 2b38c1bb0446d78f..7a2e4d45b266724c 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -47,32 +47,15 @@ static void acpi_sleep_tts_switch(u32 acpi_state)
  	}
- 	if (ap->flags & ATA_FLAG_NCQ) {
-+#ifdef CONFIG_ZEN_INTERACTIVE
-+		hdepth = min(ap->scsi_host->can_queue, 8);
-+#else
- 		hdepth = min(ap->scsi_host->can_queue, ATA_MAX_QUEUE - 1);
-+#endif
- 		dev->flags |= ATA_DFLAG_NCQ;
- 	}
+ }
  
+-static void acpi_sleep_pts_switch(u32 acpi_state)
+-{
+-	acpi_status status;
+-
+-	status = acpi_execute_simple_method(NULL, "\\_PTS", acpi_state);
+-	if (ACPI_FAILURE(status) && status != AE_NOT_FOUND) {
+-		/*
+-		 * OS can't evaluate the _PTS object correctly. Some warning
+-		 * message will be printed. But it won't break anything.
+-		 */
+-		printk(KERN_NOTICE "Failure in evaluating _PTS object\n");
+-	}
+-}
+-
+-static int sleep_notify_reboot(struct notifier_block *this,
++static int tts_notify_reboot(struct notifier_block *this,
+ 			unsigned long code, void *x)
+ {
+ 	acpi_sleep_tts_switch(ACPI_STATE_S5);
+-
+-	acpi_sleep_pts_switch(ACPI_STATE_S5);
+-
+ 	return NOTIFY_DONE;
+ }
+ 
+-static struct notifier_block sleep_notifier = {
+-	.notifier_call	= sleep_notify_reboot,
++static struct notifier_block tts_notifier = {
++	.notifier_call	= tts_notify_reboot,
+ 	.next		= NULL,
+ 	.priority	= 0,
+ };
+@@ -916,9 +899,9 @@ int __init acpi_sleep_init(void)
+ 	pr_info(PREFIX "(supports%s)\n", supported);
+ 
+ 	/*
+-	 * Register the sleep_notifier to reboot notifier list so that the _TTS
+-	 * and _PTS object can also be evaluated when the system enters S5.
++	 * Register the tts_notifier to reboot notifier list so that the _TTS
++	 * object can also be evaluated when the system enters S5.
+ 	 */
+-	register_reboot_notifier(&sleep_notifier);
++	register_reboot_notifier(&tts_notifier);
+ 	return 0;
+ }
 diff --git a/drivers/block/loop.c b/drivers/block/loop.c
 index c9f2107f7095148d..005e2921aaa4e3ed 100644
 --- a/drivers/block/loop.c
@@ -13149,39 +13969,14 @@ index c9f2107f7095148d..005e2921aaa4e3ed 100644
  /* loop sysfs attributes */
  
  static ssize_t loop_attr_show(struct device *dev, char *page,
-diff --git a/drivers/cpufreq/cpufreq_conservative.c b/drivers/cpufreq/cpufreq_conservative.c
-index 18da4f8051d372d0..af8825ad28a89da9 100644
---- a/drivers/cpufreq/cpufreq_conservative.c
-+++ b/drivers/cpufreq/cpufreq_conservative.c
-@@ -30,8 +30,14 @@ struct cs_dbs_tuners {
- };
- 
- /* Conservative governor macros */
-+#ifdef CONFIG_SCHED_MUQSS
-+#define DEF_FREQUENCY_UP_THRESHOLD		(63)
-+#define DEF_FREQUENCY_DOWN_THRESHOLD		(26)
-+#else
- #define DEF_FREQUENCY_UP_THRESHOLD		(80)
- #define DEF_FREQUENCY_DOWN_THRESHOLD		(20)
-+#endif
-+
- #define DEF_FREQUENCY_STEP			(5)
- #define DEF_SAMPLING_DOWN_FACTOR		(1)
- #define MAX_SAMPLING_DOWN_FACTOR		(10)
 diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq_ondemand.c
-index 3a1f49f5f4c68ae4..a86804188125ce28 100644
+index 3a1f49f5f4c68ae4..39dbba7af42f4eee 100644
 --- a/drivers/cpufreq/cpufreq_ondemand.c
 +++ b/drivers/cpufreq/cpufreq_ondemand.c
-@@ -20,8 +20,17 @@
- #include "cpufreq_ondemand.h"
+@@ -21,7 +21,11 @@
  
  /* On-demand governor macros */
-+#ifdef CONFIG_SCHED_MUQSS
-+#define DEF_FREQUENCY_UP_THRESHOLD		(63)
-+#else
  #define DEF_FREQUENCY_UP_THRESHOLD		(80)
-+#endif
-+
 +#ifdef CONFIG_ZEN_INTERACTIVE
 +#define DEF_SAMPLING_DOWN_FACTOR		(10)
 +#else
@@ -13190,18 +13985,6 @@ index 3a1f49f5f4c68ae4..a86804188125ce28 100644
  #define MAX_SAMPLING_DOWN_FACTOR		(100000)
  #define MICRO_FREQUENCY_UP_THRESHOLD		(95)
  #define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)
-diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
-index 2d2481392824a61a..0f042d133ff090bb 100644
---- a/drivers/gpu/drm/i915/intel_pm.c
-+++ b/drivers/gpu/drm/i915/intel_pm.c
-@@ -3907,7 +3907,6 @@ skl_wm_flush_pipe(struct drm_i915_private *dev_priv, enum pipe pipe, int pass)
- 		I915_WRITE(PLANE_SURF(pipe, plane),
- 			   I915_READ(PLANE_SURF(pipe, plane)));
- 	}
--	I915_WRITE(CURBASE(pipe), I915_READ(CURBASE(pipe)));
- }
- 
- static bool
 diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
 index f3135ae22df429c7..b30ab7e7af4668d0 100644
 --- a/drivers/input/joydev.c
@@ -111513,10 +112296,10 @@ index 0000000000000000..33c6525e449bdf05
 +#endif /* _EXFAT_CONFIG_H */
 diff --git a/fs/exfat/exfat_core.c b/fs/exfat/exfat_core.c
 new file mode 100644
-index 0000000000000000..d48514189f5b7d81
+index 0000000000000000..73c089f7f548468b
 --- /dev/null
 +++ b/fs/exfat/exfat_core.c
-@@ -0,0 +1,5114 @@
+@@ -0,0 +1,5124 @@
 +/* Some of the source code in this file came from "linux/fs/fat/misc.c".  */
 +/*
 + *  linux/fs/fat/misc.c
@@ -111702,7 +112485,7 @@ index 0000000000000000..d48514189f5b7d81
 +	if (sector_read(sb, 0, &tmp_bh, 1) != FFS_SUCCESS)
 +		return FFS_MEDIAERR;
 +
-+		p_fs->PBR_sector = 0;
++	p_fs->PBR_sector = 0;
 +
 +	p_pbr = (PBR_SECTOR_T *) tmp_bh->b_data;
 +
@@ -115277,7 +116060,7 @@ index 0000000000000000..d48514189f5b7d81
 +   -2 : entry with the name does not exist */
 +s32 exfat_find_dir_entry(struct super_block *sb, CHAIN_T *p_dir, UNI_NAME_T *p_uniname, s32 num_entries, DOS_NAME_T *p_dosname, u32 type)
 +{
-+	int i, dentry = 0, num_ext_entries = 0, len;
++	int i = 0, dentry = 0, num_ext_entries = 0, len, step;
 +	s32 order = 0, is_feasible_entry = FALSE;
 +	s32 dentries_per_clu, num_empty = 0;
 +	u32 entry_type;
@@ -115311,12 +116094,13 @@ index 0000000000000000..d48514189f5b7d81
 +		if (p_fs->dev_ejected)
 +			break;
 +
-+		for (i = 0; i < dentries_per_clu; i++, dentry++) {
++		while (i < dentries_per_clu) {
 +			ep = get_entry_in_dir(sb, &clu, i, NULL);
 +			if (!ep)
 +				return -2;
 +
 +			entry_type = p_fs->fs_func->get_entry_type(ep);
++			step = 1;
 +
 +			if ((entry_type == TYPE_UNUSED) || (entry_type == TYPE_DELETED)) {
 +				is_feasible_entry = FALSE;
@@ -115339,20 +116123,23 @@ index 0000000000000000..d48514189f5b7d81
 +				num_empty = 0;
 +
 +				if ((entry_type == TYPE_FILE) || (entry_type == TYPE_DIR)) {
++					file_ep = (FILE_DENTRY_T *) ep;
 +					if ((type == TYPE_ALL) || (type == entry_type)) {
-+						file_ep = (FILE_DENTRY_T *) ep;
 +						num_ext_entries = file_ep->num_ext;
 +						is_feasible_entry = TRUE;
 +					} else {
 +						is_feasible_entry = FALSE;
++						step = file_ep->num_ext + 1;
 +					}
 +				} else if (entry_type == TYPE_STREAM) {
 +					if (is_feasible_entry) {
 +						strm_ep = (STRM_DENTRY_T *) ep;
-+						if (p_uniname->name_len == strm_ep->name_len) {
++						if (p_uniname->name_hash == GET16_A(strm_ep->name_hash) &&
++						    p_uniname->name_len == strm_ep->name_len) {
 +							order = 1;
 +						} else {
 +							is_feasible_entry = FALSE;
++							step = num_ext_entries;
 +						}
 +					}
 +				} else if (entry_type == TYPE_EXTEND) {
@@ -115371,6 +116158,7 @@ index 0000000000000000..d48514189f5b7d81
 +
 +						if (nls_uniname_cmp(sb, uniname, entry_uniname)) {
 +							is_feasible_entry = FALSE;
++							step = num_ext_entries - order + 1;
 +						} else if (order == num_ext_entries) {
 +							p_fs->hint_uentry.dir = CLUSTER_32(~0);
 +							p_fs->hint_uentry.entry = -1;
@@ -115383,7 +116171,12 @@ index 0000000000000000..d48514189f5b7d81
 +					is_feasible_entry = FALSE;
 +				}
 +			}
++
++			i += step;
++			dentry += step;
 +		}
++
++		i -= dentries_per_clu;
 +
 +		if (p_dir->dir == CLUSTER_32(0))
 +			break; /* FAT16 root_dir */
@@ -122067,7 +122860,7 @@ index 436f43f87da92837..95fbfa1fe0105781 100644
 +
  #endif /* __LINUX_BLK_TYPES_H */
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index e79055c8b577995c..fccdcd941b40feed 100644
+index e79055c8b577995c..5a41d3ea6daf8dab 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
 @@ -24,6 +24,7 @@
@@ -122086,7 +122879,7 @@ index e79055c8b577995c..fccdcd941b40feed 100644
  
  #define BLKDEV_MIN_RQ	4
 +#ifdef CONFIG_ZEN_INTERACTIVE
-+#define BLKDEV_MAX_RQ	16
++#define BLKDEV_MAX_RQ	512
 +#else
  #define BLKDEV_MAX_RQ	128	/* Default maximum */
 +#endif
@@ -123094,7 +123887,7 @@ index 0000000000000000..926c7ee0ef4e6570
 +/* This part must be outside protection */
 +#include <trace/define_trace.h>
 diff --git a/include/uapi/linux/Kbuild b/include/uapi/linux/Kbuild
-index 185f8ea2702fc6b8..5deb0d1889f51c77 100644
+index 407ca0d7a938df78..899e5474eafe47a8 100644
 --- a/include/uapi/linux/Kbuild
 +++ b/include/uapi/linux/Kbuild
 @@ -59,6 +59,7 @@ header-y += atmsvc.h
@@ -123570,7 +124363,7 @@ index f69034887e687d3a..18db2755a27c2686 100644
  		   consoles 16 and higher (since it returns a short) */
  
 diff --git a/init/Kconfig b/init/Kconfig
-index cac3f096050d5b27..050f1763e1aa97ba 100644
+index cac3f096050d5b27..a5949bec3d7a052f 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
 @@ -28,6 +28,47 @@ config BUILDTIME_EXTABLE_SORT
@@ -123579,6 +124372,7 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
  
 +config SCHED_MUQSS
 +	bool "MuQSS cpu scheduler"
++    select HIGH_RES_TIMERS
 +	default n
 +	---help---
 +	  The Multiple Queue Skiplist Scheduler for excellent interactivity and
@@ -123598,8 +124392,7 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
 +
 +	  --- Block Layer ----------------------------------------
 +
-+	    NCQ Queue Depth................:  31    ->   8
-+	    Block Layer Queue Depth........: 128    ->  16
++	    Block Layer Queue Depth........: 128    ->  512
 +
 +	  --- CPU Scheduler (CFS) --------------------------------
 +
@@ -123621,32 +124414,16 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
  config BROKEN
  	bool
  
-@@ -338,7 +379,7 @@ choice
- # Kind of a stub config for the pure tick based cputime accounting
- config TICK_CPU_ACCOUNTING
- 	bool "Simple tick based cputime accounting"
--	depends on !S390 && !NO_HZ_FULL
-+	depends on !S390 && !NO_HZ_FULL && !SCHED_MUQSS
+@@ -540,7 +581,7 @@ config CONTEXT_TRACKING
+ config CONTEXT_TRACKING_FORCE
+ 	bool "Force context tracking"
+ 	depends on CONTEXT_TRACKING
+-	default y if !NO_HZ_FULL
++	default y if !NO_HZ_FULL && !SCHED_MUQSS
  	help
- 	  This is the basic tick based cputime accounting that maintains
- 	  statistics about user, system and idle time spent on per jiffies
-@@ -363,6 +404,7 @@ config VIRT_CPU_ACCOUNTING_GEN
- 	bool "Full dynticks CPU time accounting"
- 	depends on HAVE_CONTEXT_TRACKING
- 	depends on HAVE_VIRT_CPU_ACCOUNTING_GEN
-+	depends on !SCHED_MUQSS
- 	select VIRT_CPU_ACCOUNTING
- 	select CONTEXT_TRACKING
- 	help
-@@ -698,6 +740,7 @@ config RCU_NOCB_CPU
- 	bool "Offload RCU callback processing from boot-selected CPUs"
- 	depends on TREE_RCU || PREEMPT_RCU
- 	depends on RCU_EXPERT || NO_HZ_FULL
-+	depends on !SCHED_MUQSS
- 	default n
- 	help
- 	  Use this option to reduce OS jitter for aggressive HPC or
-@@ -930,6 +973,7 @@ config NUMA_BALANCING
+ 	  The major pre-requirement for full dynticks to work is to
+ 	  support the context tracking subsystem. But there are also
+@@ -930,6 +971,7 @@ config NUMA_BALANCING
  	depends on ARCH_SUPPORTS_NUMA_BALANCING
  	depends on !ARCH_WANT_NUMA_VARIABLE_LOCALITY
  	depends on SMP && NUMA && MIGRATION
@@ -123654,7 +124431,7 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
  	help
  	  This option adds support for automatic NUMA aware memory/task placement.
  	  The mechanism is quite primitive and is based on migrating memory when
-@@ -1032,9 +1076,13 @@ menuconfig CGROUP_SCHED
+@@ -1032,9 +1074,13 @@ menuconfig CGROUP_SCHED
  	help
  	  This feature lets CPU scheduler recognize task groups and control CPU
  	  bandwidth allocation to such task groups. It uses cgroups to group
@@ -123670,7 +124447,7 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
  config FAIR_GROUP_SCHED
  	bool "Group scheduling for SCHED_OTHER"
  	depends on CGROUP_SCHED
-@@ -1130,6 +1178,7 @@ config CGROUP_DEVICE
+@@ -1130,6 +1176,7 @@ config CGROUP_DEVICE
  
  config CGROUP_CPUACCT
  	bool "Simple CPU accounting controller"
@@ -123678,7 +124455,7 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
  	help
  	  Provides a simple controller for monitoring the
  	  total CPU consumed by the tasks in a cgroup.
-@@ -1228,6 +1277,7 @@ endif # NAMESPACES
+@@ -1228,6 +1275,7 @@ endif # NAMESPACES
  
  config SCHED_AUTOGROUP
  	bool "Automatic process group scheduling"
@@ -123686,7 +124463,7 @@ index cac3f096050d5b27..050f1763e1aa97ba 100644
  	select CGROUPS
  	select CGROUP_SCHED
  	select FAIR_GROUP_SCHED
-@@ -1320,6 +1370,13 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
+@@ -1320,6 +1368,13 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
  	  with the "-O2" compiler flag for best performance and most
  	  helpful compile-time warnings.
  
@@ -123721,6 +124498,45 @@ index a8a58e2794a50469..76a2d14aa1f60413 100644
  	if (ramdisk_execute_command) {
  		ret = run_init_process(ramdisk_execute_command);
  		if (!ret)
+diff --git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
+index 2a202a846757f238..1532e4e14d2f6141 100644
+--- a/kernel/Kconfig.hz
++++ b/kernel/Kconfig.hz
+@@ -4,7 +4,8 @@
+ 
+ choice
+ 	prompt "Timer frequency"
+-	default HZ_250
++	default HZ_128 if SCHED_MUQSS
++	default HZ_250 if !SCHED_MUQSS
+ 	help
+ 	 Allows the configuration of the timer frequency. It is customary
+ 	 to have the timer interrupt run at 1000 Hz but 100 Hz may be more
+@@ -23,6 +24,16 @@ choice
+ 	  with lots of processors that may show reduced performance if
+ 	  too many timer interrupts are occurring.
+ 
++	config HZ_128
++		bool "128 HZ"
++	help
++	  128 Hz is a suitable choice in combination with MuQSS which does
++	  not rely on ticks for rescheduling interrupts, and is not Hz limited
++	  for timeouts and sleeps from both the kernel and userspace.
++	  This allows us to benefit from the lower overhead and higher
++	  throughput of fewer timer ticks and the microoptimisation of Hz
++	  divisions being a power of 2.
++
+ 	config HZ_250
+ 		bool "250 HZ"
+ 	help
+@@ -50,6 +61,7 @@ endchoice
+ config HZ
+ 	int
+ 	default 100 if HZ_100
++	default 128 if HZ_128
+ 	default 250 if HZ_250
+ 	default 300 if HZ_300
+ 	default 1000 if HZ_1000
 diff --git a/kernel/Makefile b/kernel/Makefile
 index e2ec54e2b9523a2b..7241e34599b1d3a5 100644
 --- a/kernel/Makefile
@@ -123774,17 +124590,18 @@ index beb31725f7e2746f..ad4cfa8b45b1e17b 100644
  				atomic_dec(&inode->i_writecount);
  			i_mmap_lock_write(mapping);
 diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
-index 5e59b832ae2b4b74..a787aa942603a98c 100644
+index 5e59b832ae2b4b74..77bdf9807f99d40b 100644
 --- a/kernel/sched/Makefile
 +++ b/kernel/sched/Makefile
 @@ -15,13 +15,18 @@ ifneq ($(CONFIG_SCHED_OMIT_FRAME_POINTER),y)
  CFLAGS_core.o := $(PROFILING) -fno-omit-frame-pointer
  endif
  
+-obj-y += core.o loadavg.o clock.o cputime.o
 +ifdef CONFIG_SCHED_MUQSS
 +obj-y += MuQSS.o clock.o
 +else
- obj-y += core.o loadavg.o clock.o cputime.o
++obj-y += core.o loadavg.o clock.o
  obj-y += idle_task.o fair.o rt.o deadline.o stop_task.o
 -obj-y += wait.o swait.o completion.o idle.o
 -obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o
@@ -123794,17 +124611,17 @@ index 5e59b832ae2b4b74..a787aa942603a98c 100644
  obj-$(CONFIG_SCHED_DEBUG) += debug.o
  obj-$(CONFIG_CGROUP_CPUACCT) += cpuacct.o
 +endif
-+obj-y += wait.o swait.o completion.o idle.o
++obj-y += wait.o swait.o completion.o idle.o cputime.o
 +obj-$(CONFIG_SMP) += cpupri.o
 +obj-$(CONFIG_SCHEDSTATS) += stats.o
  obj-$(CONFIG_CPU_FREQ) += cpufreq.o
  obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
 diff --git a/kernel/sched/MuQSS.c b/kernel/sched/MuQSS.c
 new file mode 100644
-index 0000000000000000..b95292f140f09b3e
+index 0000000000000000..0d4eaf02c8cca783
 --- /dev/null
 +++ b/kernel/sched/MuQSS.c
-@@ -0,0 +1,8231 @@
+@@ -0,0 +1,7898 @@
 +/*
 + *  kernel/sched/MuQSS.c, was kernel/sched.c
 + *
@@ -123930,6 +124747,7 @@ index 0000000000000000..b95292f140f09b3e
 + */
 +#define JIFFIES_TO_NS(TIME)	((TIME) * (1073741824 / HZ))
 +#define JIFFY_NS		(1073741824 / HZ)
++#define JIFFY_US		(1048576 / HZ)
 +#define NS_TO_JIFFIES(TIME)	((TIME) / JIFFY_NS)
 +#define HALF_JIFFY_NS		(1073741824 / HZ / 2)
 +#define HALF_JIFFY_US		(1048576 / HZ / 2)
@@ -123937,12 +124755,13 @@ index 0000000000000000..b95292f140f09b3e
 +#define MS_TO_US(TIME)		((TIME) << 10)
 +#define NS_TO_MS(TIME)		((TIME) >> 20)
 +#define NS_TO_US(TIME)		((TIME) >> 10)
++#define US_TO_NS(TIME)		((TIME) << 10)
 +
 +#define RESCHED_US	(100) /* Reschedule if less than this many μs left */
 +
 +void print_scheduler_version(void)
 +{
-+	printk(KERN_INFO "MuQSS CPU scheduler v0.115 by Con Kolivas.\n");
++	printk(KERN_INFO "MuQSS CPU scheduler v0.144 by Con Kolivas.\n");
 +}
 +
 +/*
@@ -123986,9 +124805,26 @@ index 0000000000000000..b95292f140f09b3e
 +	return MS_TO_US(rr_interval);
 +}
 +
-+#ifdef CONFIG_SMP
-+static cpumask_t cpu_idle_map ____cacheline_aligned_in_smp;
++static bool sched_smp_initialized __read_mostly;
 +
++/*
++ * The global runqueue data that all CPUs work off. Contains either atomic
++ * variables and a cpu bitmap set atomically.
++ */
++struct global_rq {
++#ifdef CONFIG_SMP
++	atomic_t nr_running ____cacheline_aligned_in_smp;
++	atomic_t nr_uninterruptible ____cacheline_aligned_in_smp;
++	atomic64_t nr_switches ____cacheline_aligned_in_smp;
++	cpumask_t cpu_idle_map ____cacheline_aligned_in_smp;
++#else
++	atomic_t nr_running ____cacheline_aligned;
++	atomic_t nr_uninterruptible ____cacheline_aligned;
++	atomic64_t nr_switches ____cacheline_aligned;
++#endif
++};
++
++#ifdef CONFIG_SMP
 +/*
 + * We add the notion of a root-domain which will be used to define per-domain
 + * variables. Each exclusive cpuset essentially defines an island domain by
@@ -124019,6 +124855,13 @@ index 0000000000000000..b95292f140f09b3e
 +static struct root_domain def_root_domain;
 +
 +#endif /* CONFIG_SMP */
++
++/* There can be only one */
++#ifdef CONFIG_SMP
++static struct global_rq grq ____cacheline_aligned_in_smp;
++#else
++static struct global_rq grq ____cacheline_aligned;
++#endif
 +
 +static DEFINE_MUTEX(sched_hotcpu_mutex);
 +
@@ -124541,6 +125384,13 @@ index 0000000000000000..b95292f140f09b3e
 +static void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
 +static inline void resched_if_idle(struct rq *rq);
 +
++/* Dodgy workaround till we figure out where the softirqs are going */
++static inline void do_pending_softirq(struct rq *rq, struct task_struct *next)
++{
++	if (unlikely(next == rq->idle && local_softirq_pending() && !in_interrupt()))
++		do_softirq_own_stack();
++}
++
 +static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
 +{
 +#ifdef CONFIG_SMP
@@ -124575,7 +125425,6 @@ index 0000000000000000..b95292f140f09b3e
 +	 */
 +	if (unlikely(task_on_rq_migrating(prev))) {
 +		sched_info_dequeued(rq, prev);
-+		rq->nr_running--;
 +		/*
 +		 * We move the ownership of prev to the new cpu now. ttwu can't
 +		 * activate prev to the wrong cpu since it has to grab this
@@ -124586,7 +125435,6 @@ index 0000000000000000..b95292f140f09b3e
 +
 +		raw_spin_lock(&prev->pi_lock);
 +		rq = __task_rq_lock(prev);
-+		rq->nr_running++;
 +		/* Check that someone else hasn't already queued prev */
 +		if (likely(!task_queued(prev))) {
 +			enqueue_task(rq, prev, 0);
@@ -124597,7 +125445,11 @@ index 0000000000000000..b95292f140f09b3e
 +		raw_spin_unlock(&prev->pi_lock);
 +	}
 +#endif
-+	raw_spin_unlock_irq(&rq->lock);
++	rq_unlock(rq);
++
++	do_pending_softirq(rq, current);
++
++	local_irq_enable();
 +}
 +
 +static inline bool deadline_before(u64 deadline, u64 time)
@@ -124641,7 +125493,7 @@ index 0000000000000000..b95292f140f09b3e
 +
 +static inline int rq_load(struct rq *rq)
 +{
-+	return rq->nr_running;
++	return rq->sl->entries + !rq_idle(rq);
 +}
 +
 +static inline bool rq_local(struct rq *rq);
@@ -124655,20 +125507,24 @@ index 0000000000000000..b95292f140f09b3e
 + */
 +static void update_load_avg(struct rq *rq)
 +{
-+	/* rq clock can go backwards so skip update if that happens */
-+	if (likely(rq->clock > rq->load_update)) {
-+		unsigned long us_interval = (rq->clock - rq->load_update) >> 10;
-+		long load, curload = rq_load(rq);
++	unsigned long us_interval;
++	long load, curload;
 +
-+		load = rq->load_avg - (rq->load_avg * us_interval * 5 / 262144);
-+		if (unlikely(load < 0))
-+			load = 0;
-+		load += curload * curload * SCHED_CAPACITY_SCALE * us_interval * 5 / 262144;
-+		rq->load_avg = load;
-+	} else
++	if (unlikely(rq->niffies <= rq->load_update))
 +		return;
 +
-+	rq->load_update = rq->clock;
++	us_interval = NS_TO_US(rq->niffies - rq->load_update);
++	curload = rq_load(rq);
++	load = rq->load_avg - (rq->load_avg * us_interval * 5 / 262144);
++	if (unlikely(load < 0))
++		load = 0;
++	load += curload * curload * SCHED_CAPACITY_SCALE * us_interval * 5 / 262144;
++	/* If this CPU has all the load, make it ramp up quickly */
++	if (curload > load && curload >= atomic_read(&grq.nr_running))
++		load = curload;
++	rq->load_avg = load;
++
++	rq->load_update = rq->niffies;
 +	if (likely(rq_local(rq)))
 +		cpufreq_trigger(rq->niffies, rq->load_avg);
 +}
@@ -124892,7 +125748,7 @@ index 0000000000000000..b95292f140f09b3e
 +static inline void set_cpuidle_map(int cpu)
 +{
 +	if (likely(cpu_online(cpu)))
-+		atomic_set_cpu(cpu, &cpu_idle_map);
++		atomic_set_cpu(cpu, &grq.cpu_idle_map);
 +}
 +
 +static inline void atomic_clear_cpu(int cpu, cpumask_t *cpumask)
@@ -124902,12 +125758,12 @@ index 0000000000000000..b95292f140f09b3e
 +
 +static inline void clear_cpuidle_map(int cpu)
 +{
-+	atomic_clear_cpu(cpu, &cpu_idle_map);
++	atomic_clear_cpu(cpu, &grq.cpu_idle_map);
 +}
 +
 +static bool suitable_idle_cpus(struct task_struct *p)
 +{
-+	return (cpumask_intersects(&p->cpus_allowed, &cpu_idle_map));
++	return (cpumask_intersects(&p->cpus_allowed, &grq.cpu_idle_map));
 +}
 +
 +/*
@@ -125038,7 +125894,7 @@ index 0000000000000000..b95292f140f09b3e
 +	struct rq *rq;
 +	int best_cpu;
 +
-+	cpumask_and(&tmpmask, &p->cpus_allowed, &cpu_idle_map);
++	cpumask_and(&tmpmask, &p->cpus_allowed, &grq.cpu_idle_map);
 +	best_cpu = best_mask_cpu(cpu, task_rq(p), &tmpmask);
 +	rq = cpu_rq(best_cpu);
 +	if (!smt_schedule(p, rq))
@@ -125150,11 +126006,11 @@ index 0000000000000000..b95292f140f09b3e
 +
 +	p->prio = effective_prio(p);
 +	if (task_contributes_to_load(p))
-+		rq->nr_uninterruptible--;
++		atomic_dec(&grq.nr_uninterruptible);
 +
 +	enqueue_task(rq, p, 0);
 +	p->on_rq = TASK_ON_RQ_QUEUED;
-+	rq->nr_running++;
++	atomic_inc(&grq.nr_running);
 +}
 +
 +/*
@@ -125164,10 +126020,10 @@ index 0000000000000000..b95292f140f09b3e
 +static inline void deactivate_task(struct task_struct *p, struct rq *rq)
 +{
 +	if (task_contributes_to_load(p))
-+		rq->nr_uninterruptible++;
++		atomic_inc(&grq.nr_uninterruptible);
 +
 +	p->on_rq = 0;
-+	rq->nr_running--;
++	atomic_dec(&grq.nr_running);
 +	sched_info_dequeued(rq, p);
 +}
 +
@@ -125188,7 +126044,7 @@ index 0000000000000000..b95292f140f09b3e
 +	WARN_ON_ONCE(debug_locks && !(lockdep_is_held(&p->pi_lock) ||
 +				      lockdep_is_held(&task_rq(p)->lock)));
 +#endif
-+	if (p->wake_cpu == cpu)
++	if (task_cpu(p) == cpu)
 +		return;
 +	trace_sched_migrate_task(p, cpu);
 +	perf_event_task_migrate(p);
@@ -125235,9 +126091,7 @@ index 0000000000000000..b95292f140f09b3e
 +
 +	dequeue_task(p_rq, p, DEQUEUE_SAVE);
 +	if (p_rq != rq) {
-+		p_rq->nr_running--;
 +		sched_info_dequeued(p_rq, p);
-+		rq->nr_running++;
 +		sched_info_queued(rq, p);
 +	}
 +	set_task_cpu(p, cpu);
@@ -125574,7 +126428,7 @@ index 0000000000000000..b95292f140f09b3e
 +
 +#ifdef CONFIG_SMP
 +	if (p->sched_contributes_to_load)
-+		rq->nr_uninterruptible--;
++		atomic_dec(&grq.nr_uninterruptible);
 +#endif
 +
 +	ttwu_activate(rq, p);
@@ -125603,8 +126457,6 @@ index 0000000000000000..b95292f140f09b3e
 +}
 +
 +#ifdef CONFIG_SMP
-+static bool sched_smp_initialized __read_mostly;
-+
 +void sched_ttwu_pending(void)
 +{
 +	struct rq *rq = this_rq();
@@ -126119,6 +126971,86 @@ index 0000000000000000..b95292f140f09b3e
 +static inline void init_schedstats(void) {}
 +#endif /* CONFIG_SCHEDSTATS */
 +
++static void update_cpu_clock_switch(struct rq *rq, struct task_struct *p);
++
++static void account_task_cpu(struct rq *rq, struct task_struct *p)
++{
++	update_clocks(rq);
++	/* This isn't really a context switch but accounting is the same */
++	update_cpu_clock_switch(rq, p);
++	p->last_ran = rq->niffies;
++}
++
++static inline int hrexpiry_enabled(struct rq *rq)
++{
++	if (unlikely(!cpu_active(cpu_of(rq)) || !sched_smp_initialized))
++		return 0;
++	return hrtimer_is_hres_active(&rq->hrexpiry_timer);
++}
++
++/*
++ * Use HR-timers to deliver accurate preemption points.
++ */
++static inline void hrexpiry_clear(struct rq *rq)
++{
++	if (!hrexpiry_enabled(rq))
++		return;
++	if (hrtimer_active(&rq->hrexpiry_timer))
++		hrtimer_cancel(&rq->hrexpiry_timer);
++}
++
++/*
++ * High-resolution time_slice expiry.
++ * Runs from hardirq context with interrupts disabled.
++ */
++static enum hrtimer_restart hrexpiry(struct hrtimer *timer)
++{
++	struct rq *rq = container_of(timer, struct rq, hrexpiry_timer);
++	struct task_struct *p;
++
++	/* This can happen during CPU hotplug / resume */
++	if (unlikely(cpu_of(rq) != smp_processor_id()))
++		goto out;
++
++	/*
++	 * We're doing this without the runqueue lock but this should always
++	 * be run on the local CPU. Time slice should run out in __schedule
++	 * but we set it to zero here in case niffies is slightly less.
++	 */
++	p = rq->curr;
++	p->time_slice = 0;
++	__set_tsk_resched(p);
++out:
++	return HRTIMER_NORESTART;
++}
++
++/*
++ * Called to set the hrexpiry timer state.
++ *
++ * called with irqs disabled from the local CPU only
++ */
++static void hrexpiry_start(struct rq *rq, u64 delay)
++{
++	if (!hrexpiry_enabled(rq))
++		return;
++
++	hrtimer_start(&rq->hrexpiry_timer, ns_to_ktime(delay),
++		      HRTIMER_MODE_REL_PINNED);
++}
++
++static void init_rq_hrexpiry(struct rq *rq)
++{
++	hrtimer_init(&rq->hrexpiry_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	rq->hrexpiry_timer.function = hrexpiry;
++}
++
++static inline int rq_dither(struct rq *rq)
++{
++	if (!hrexpiry_enabled(rq))
++		return HALF_JIFFY_US;
++	return 0;
++}
++
 +/*
 + * wake_up_new_task - wake up a newly created task for the first time.
 + *
@@ -126144,7 +127076,6 @@ index 0000000000000000..b95292f140f09b3e
 +	}
 +
 +	double_rq_lock(rq, new_rq);
-+	update_clocks(rq);
 +	rq_curr = rq->curr;
 +
 +	/*
@@ -126152,7 +127083,6 @@ index 0000000000000000..b95292f140f09b3e
 +	 */
 +	p->prio = rq_curr->normal_prio;
 +
-+	activate_task(p, rq);
 +	trace_sched_wakeup_new(p);
 +
 +	/*
@@ -126163,17 +127093,17 @@ index 0000000000000000..b95292f140f09b3e
 +	 * modified within schedule() so it is always equal to
 +	 * current->deadline.
 +	 */
++	account_task_cpu(rq, rq_curr);
 +	p->last_ran = rq_curr->last_ran;
 +	if (likely(rq_curr->policy != SCHED_FIFO)) {
 +		rq_curr->time_slice /= 2;
-+		if (unlikely(rq_curr->time_slice < RESCHED_US)) {
++		if (rq_curr->time_slice < RESCHED_US) {
 +			/*
 +			 * Forking task has run out of timeslice. Reschedule it and
 +			 * start its child with a new time slice and deadline. The
 +			 * child will end up running first because its deadline will
 +			 * be slightly earlier.
 +			 */
-+			rq_curr->time_slice = 0;
 +			__set_tsk_resched(rq_curr);
 +			time_slice_expired(p, new_rq);
 +			if (suitable_idle_cpus(p))
@@ -126189,13 +127119,20 @@ index 0000000000000000..b95292f140f09b3e
 +				 * usually avoids a lot of COW overhead.
 +				 */
 +				__set_tsk_resched(rq_curr);
-+			} else
++			} else {
++				/*
++				 * Adjust the hrexpiry since rq_curr will keep
++				 * running and its timeslice has been shortened.
++				 */
++				hrexpiry_start(rq, US_TO_NS(rq_curr->time_slice));
 +				try_preempt(p, new_rq);
++			}
 +		}
 +	} else {
 +		time_slice_expired(p, new_rq);
 +		try_preempt(p, new_rq);
 +	}
++	activate_task(p, new_rq);
 +	double_rq_unlock(rq, new_rq);
 +	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 +}
@@ -126330,7 +127267,7 @@ index 0000000000000000..b95292f140f09b3e
 + * past. prev == current is still correct but we need to recalculate this_rq
 + * because prev may have moved to another CPU.
 + */
-+static struct rq *finish_task_switch(struct task_struct *prev)
++static void finish_task_switch(struct task_struct *prev)
 +	__releases(rq->lock)
 +{
 +	struct rq *rq = this_rq();
@@ -126383,7 +127320,6 @@ index 0000000000000000..b95292f140f09b3e
 +		kprobe_flush_task(prev);
 +		put_task_struct(prev);
 +	}
-+	return rq;
 +}
 +
 +/**
@@ -126391,10 +127327,7 @@ index 0000000000000000..b95292f140f09b3e
 + * @prev: the thread we just switched away from.
 + */
 +asmlinkage __visible void schedule_tail(struct task_struct *prev)
-+	__releases(rq->lock)
 +{
-+	struct rq *rq;
-+
 +	/*
 +	 * New tasks start with FORK_PREEMPT_COUNT, see there and
 +	 * finish_task_switch() for details.
@@ -126404,7 +127337,7 @@ index 0000000000000000..b95292f140f09b3e
 +	 * PREEMPT_COUNT kernels).
 +	 */
 +
-+	rq = finish_task_switch(prev);
++	finish_task_switch(prev);
 +	preempt_enable();
 +
 +	if (current->set_child_tid)
@@ -126414,7 +127347,7 @@ index 0000000000000000..b95292f140f09b3e
 +/*
 + * context_switch - switch to the new MM and the new thread's register state.
 + */
-+static __always_inline struct rq *
++static __always_inline void
 +context_switch(struct rq *rq, struct task_struct *prev,
 +	       struct task_struct *next)
 +{
@@ -126454,7 +127387,23 @@ index 0000000000000000..b95292f140f09b3e
 +	switch_to(prev, next, prev);
 +	barrier();
 +
-+	return finish_task_switch(prev);
++	finish_task_switch(prev);
++}
++
++/*
++ * nr_running, nr_uninterruptible and nr_context_switches:
++ *
++ * externally visible scheduler statistics: current number of runnable
++ * threads, total number of context switches performed since bootup.
++ */
++unsigned long nr_running(void)
++{
++	return atomic_read(&grq.nr_running);
++}
++
++static unsigned long nr_uninterruptible(void)
++{
++	return atomic_read(&grq.nr_uninterruptible);
 +}
 +
 +/*
@@ -126481,31 +127430,9 @@ index 0000000000000000..b95292f140f09b3e
 +}
 +EXPORT_SYMBOL(single_task_running);
 +
-+/*
-+ * nr_running, nr_uninterruptible and nr_context_switches:
-+ *
-+ * externally visible scheduler statistics: current number of runnable
-+ * threads, total number of context switches performed since bootup.
-+ */
 +unsigned long long nr_context_switches(void)
 +{
-+	long long sum = 0;
-+	int i;
-+
-+	for_each_possible_cpu(i)
-+		sum += cpu_rq(i)->nr_switches;
-+
-+	return sum;
-+}
-+
-+unsigned long nr_running(void)
-+{
-+	long i, sum = 0;
-+
-+	for_each_online_cpu(i)
-+		sum += cpu_rq(i)->nr_running;
-+
-+	return sum;
++	return (unsigned long long)atomic64_read(&grq.nr_switches);
 +}
 +
 +unsigned long nr_iowait(void)
@@ -126526,14 +127453,7 @@ index 0000000000000000..b95292f140f09b3e
 +
 +unsigned long nr_active(void)
 +{
-+	long i, sum = 0;
-+
-+	for_each_online_cpu(i) {
-+		sum += cpu_rq(i)->nr_running;
-+		sum += cpu_rq(i)->nr_uninterruptible;
-+	}
-+
-+	return sum;
++	return nr_running() + nr_uninterruptible();
 +}
 +
 +/*
@@ -126604,116 +127524,6 @@ index 0000000000000000..b95292f140f09b3e
 +EXPORT_PER_CPU_SYMBOL(kstat);
 +EXPORT_PER_CPU_SYMBOL(kernel_cpustat);
 +
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+
-+/*
-+ * There are no locks covering percpu hardirq/softirq time.
-+ * They are only modified in account_system_vtime, on corresponding CPU
-+ * with interrupts disabled. So, writes are safe.
-+ * They are read and saved off onto struct rq in update_rq_clock().
-+ * This may result in other CPU reading this CPU's irq time and can
-+ * race with irq/account_system_vtime on this CPU. We would either get old
-+ * or new value with a side effect of accounting a slice of irq time to wrong
-+ * task when irq is in progress while we read rq->clock. That is a worthy
-+ * compromise in place of having locks on each irq in account_system_time.
-+ */
-+static DEFINE_PER_CPU(u64, cpu_hardirq_time);
-+static DEFINE_PER_CPU(u64, cpu_softirq_time);
-+
-+static DEFINE_PER_CPU(u64, irq_start_time);
-+static int sched_clock_irqtime;
-+
-+void enable_sched_clock_irqtime(void)
-+{
-+	sched_clock_irqtime = 1;
-+}
-+
-+void disable_sched_clock_irqtime(void)
-+{
-+	sched_clock_irqtime = 0;
-+}
-+
-+#ifndef CONFIG_64BIT
-+static DEFINE_PER_CPU(seqcount_t, irq_time_seq);
-+
-+static inline void irq_time_write_begin(void)
-+{
-+	__this_cpu_inc(irq_time_seq.sequence);
-+	smp_wmb();
-+}
-+
-+static inline void irq_time_write_end(void)
-+{
-+	smp_wmb();
-+	__this_cpu_inc(irq_time_seq.sequence);
-+}
-+
-+static inline u64 irq_time_read(int cpu)
-+{
-+	u64 irq_time;
-+	unsigned seq;
-+
-+	do {
-+		seq = read_seqcount_begin(&per_cpu(irq_time_seq, cpu));
-+		irq_time = per_cpu(cpu_softirq_time, cpu) +
-+			   per_cpu(cpu_hardirq_time, cpu);
-+	} while (read_seqcount_retry(&per_cpu(irq_time_seq, cpu), seq));
-+
-+	return irq_time;
-+}
-+#else /* CONFIG_64BIT */
-+static inline void irq_time_write_begin(void)
-+{
-+}
-+
-+static inline void irq_time_write_end(void)
-+{
-+}
-+
-+static inline u64 irq_time_read(int cpu)
-+{
-+	return per_cpu(cpu_softirq_time, cpu) + per_cpu(cpu_hardirq_time, cpu);
-+}
-+#endif /* CONFIG_64BIT */
-+
-+/*
-+ * Called before incrementing preempt_count on {soft,}irq_enter
-+ * and before decrementing preempt_count on {soft,}irq_exit.
-+ */
-+void irqtime_account_irq(struct task_struct *curr)
-+{
-+	unsigned long flags;
-+	s64 delta;
-+	int cpu;
-+
-+	if (!sched_clock_irqtime)
-+		return;
-+
-+	local_irq_save(flags);
-+
-+	cpu = smp_processor_id();
-+	delta = sched_clock_cpu(cpu) - __this_cpu_read(irq_start_time);
-+	__this_cpu_add(irq_start_time, delta);
-+
-+	irq_time_write_begin();
-+	/*
-+	 * We do not account for softirq time from ksoftirqd here.
-+	 * We want to continue accounting softirq time to ksoftirqd thread
-+	 * in that case, so as not to confuse scheduler with a special task
-+	 * that do not consume any time, but still wants to run.
-+	 */
-+	if (hardirq_count())
-+		__this_cpu_add(cpu_hardirq_time, delta);
-+	else if (in_serving_softirq() && curr != this_cpu_ksoftirqd())
-+		__this_cpu_add(cpu_softirq_time, delta);
-+
-+	irq_time_write_end();
-+	local_irq_restore(flags);
-+}
-+EXPORT_SYMBOL_GPL(irqtime_account_irq);
-+
-+#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
-+
 +#ifdef CONFIG_PARAVIRT
 +static inline u64 steal_ticks(u64 steal)
 +{
@@ -126774,89 +127584,6 @@ index 0000000000000000..b95292f140f09b3e
 +#ifndef nsecs_to_cputime
 +# define nsecs_to_cputime(__nsecs)	nsecs_to_jiffies(__nsecs)
 +#endif
-+
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+static void irqtime_account_hi_si(void)
-+{
-+	u64 *cpustat = kcpustat_this_cpu->cpustat;
-+	u64 latest_ns;
-+
-+	latest_ns = nsecs_to_cputime64(this_cpu_read(cpu_hardirq_time));
-+	if (latest_ns > cpustat[CPUTIME_IRQ])
-+		cpustat[CPUTIME_IRQ] += (__force u64)cputime_one_jiffy;
-+
-+	latest_ns = nsecs_to_cputime64(this_cpu_read(cpu_softirq_time));
-+	if (latest_ns > cpustat[CPUTIME_SOFTIRQ])
-+		cpustat[CPUTIME_SOFTIRQ] += (__force u64)cputime_one_jiffy;
-+}
-+#else /* CONFIG_IRQ_TIME_ACCOUNTING */
-+
-+#define sched_clock_irqtime	(0)
-+
-+static inline void irqtime_account_hi_si(void)
-+{
-+}
-+#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
-+
-+static __always_inline bool steal_account_process_tick(void)
-+{
-+#ifdef CONFIG_PARAVIRT
-+	if (static_key_false(&paravirt_steal_enabled)) {
-+		u64 steal;
-+		cputime_t steal_ct;
-+
-+		steal = paravirt_steal_clock(smp_processor_id());
-+		steal -= this_rq()->prev_steal_time;
-+
-+		/*
-+		 * cputime_t may be less precise than nsecs (eg: if it's
-+		 * based on jiffies). Lets cast the result to cputime
-+		 * granularity and account the rest on the next rounds.
-+		 */
-+		steal_ct = nsecs_to_cputime(steal);
-+		this_rq()->prev_steal_time += cputime_to_nsecs(steal_ct);
-+
-+		account_steal_time(steal_ct);
-+		return steal_ct;
-+	}
-+#endif
-+	return false;
-+}
-+
-+/*
-+ * Accumulate raw cputime values of dead tasks (sig->[us]time) and live
-+ * tasks (sum on group iteration) belonging to @tsk's group.
-+ */
-+void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
-+{
-+	struct signal_struct *sig = tsk->signal;
-+	cputime_t utime, stime;
-+	struct task_struct *t;
-+	unsigned int seq, nextseq;
-+	unsigned long flags;
-+
-+	rcu_read_lock();
-+	/* Attempt a lockless read on the first round. */
-+	nextseq = 0;
-+	do {
-+		seq = nextseq;
-+		flags = read_seqbegin_or_lock_irqsave(&sig->stats_lock, &seq);
-+		times->utime = sig->utime;
-+		times->stime = sig->stime;
-+		times->sum_exec_runtime = sig->sum_sched_runtime;
-+
-+		for_each_thread(tsk, t) {
-+			task_cputime(t, &utime, &stime);
-+			times->utime += utime;
-+			times->stime += stime;
-+			times->sum_exec_runtime += task_sched_runtime(t);
-+		}
-+		/* If lockless access failed, take the lock. */
-+		nextseq = 1;
-+	} while (need_seqretry(&sig->stats_lock, seq));
-+	done_seqretry_irqrestore(&sig->stats_lock, seq, flags);
-+	rcu_read_unlock();
-+}
 +
 +/*
 + * On each tick, add the number of nanoseconds to the unbanked variables and
@@ -126982,14 +127709,10 @@ index 0000000000000000..b95292f140f09b3e
 + * Bank in p->sched_time the ns elapsed since the last tick or switch.
 + * CPU scheduler quota accounting is also performed here in microseconds.
 + */
-+static void
-+update_cpu_clock_tick(struct rq *rq, struct task_struct *p)
++static void update_cpu_clock_tick(struct rq *rq, struct task_struct *p)
 +{
 +	s64 account_ns = rq->niffies - p->last_ran;
 +	struct task_struct *idle = rq->idle;
-+
-+	if (steal_account_process_tick())
-+		goto ts_account;
 +
 +	/* Accurate tick timekeeping */
 +	if (user_mode(get_irq_regs()))
@@ -126999,10 +127722,6 @@ index 0000000000000000..b95292f140f09b3e
 +	} else
 +		pc_idle_time(rq, idle, account_ns);
 +
-+	if (sched_clock_irqtime)
-+		irqtime_account_hi_si();
-+
-+ts_account:
 +	/* time_slice accounting is done in usecs to avoid overflow on 32bit */
 +	if (p->policy != SCHED_FIFO && p != idle)
 +		p->time_slice -= NS_TO_US(account_ns);
@@ -127015,8 +127734,7 @@ index 0000000000000000..b95292f140f09b3e
 + * Bank in p->sched_time the ns elapsed since the last tick or switch.
 + * CPU scheduler quota accounting is also performed here in microseconds.
 + */
-+static void
-+update_cpu_clock_switch(struct rq *rq, struct task_struct *p)
++static void update_cpu_clock_switch(struct rq *rq, struct task_struct *p)
 +{
 +	s64 account_ns = rq->niffies - p->last_ran;
 +	struct task_struct *idle = rq->idle;
@@ -127089,134 +127807,6 @@ index 0000000000000000..b95292f140f09b3e
 +
 +	return ns;
 +}
-+
-+/* Compatibility crap */
-+void account_user_time(struct task_struct *p, cputime_t cputime,
-+		       cputime_t cputime_scaled)
-+{
-+}
-+
-+void account_idle_time(cputime_t cputime)
-+{
-+}
-+
-+/*
-+ * Account guest cpu time to a process.
-+ * @p: the process that the cpu time gets accounted to
-+ * @cputime: the cpu time spent in virtual machine since the last update
-+ * @cputime_scaled: cputime scaled by cpu frequency
-+ */
-+static void account_guest_time(struct task_struct *p, cputime_t cputime,
-+			       cputime_t cputime_scaled)
-+{
-+	u64 *cpustat = kcpustat_this_cpu->cpustat;
-+
-+	/* Add guest time to process. */
-+	p->utime += (__force u64)cputime;
-+	p->utimescaled += (__force u64)cputime_scaled;
-+	account_group_user_time(p, cputime);
-+	p->gtime += (__force u64)cputime;
-+
-+	/* Add guest time to cpustat. */
-+	if (task_nice(p) > 0) {
-+		cpustat[CPUTIME_NICE] += (__force u64)cputime;
-+		cpustat[CPUTIME_GUEST_NICE] += (__force u64)cputime;
-+	} else {
-+		cpustat[CPUTIME_USER] += (__force u64)cputime;
-+		cpustat[CPUTIME_GUEST] += (__force u64)cputime;
-+	}
-+}
-+
-+/*
-+ * Account system cpu time to a process and desired cpustat field
-+ * @p: the process that the cpu time gets accounted to
-+ * @cputime: the cpu time spent in kernel space since the last update
-+ * @cputime_scaled: cputime scaled by cpu frequency
-+ * @target_cputime64: pointer to cpustat field that has to be updated
-+ */
-+static inline
-+void __account_system_time(struct task_struct *p, cputime_t cputime,
-+			cputime_t cputime_scaled, cputime64_t *target_cputime64)
-+{
-+	/* Add system time to process. */
-+	p->stime += (__force u64)cputime;
-+	p->stimescaled += (__force u64)cputime_scaled;
-+	account_group_system_time(p, cputime);
-+
-+	/* Add system time to cpustat. */
-+	*target_cputime64 += (__force u64)cputime;
-+
-+	/* Account for system time used */
-+	acct_update_integrals(p);
-+}
-+
-+/*
-+ * Account system cpu time to a process.
-+ * @p: the process that the cpu time gets accounted to
-+ * @hardirq_offset: the offset to subtract from hardirq_count()
-+ * @cputime: the cpu time spent in kernel space since the last update
-+ * @cputime_scaled: cputime scaled by cpu frequency
-+ * This is for guest only now.
-+ */
-+void account_system_time(struct task_struct *p, int hardirq_offset,
-+			 cputime_t cputime, cputime_t cputime_scaled)
-+{
-+
-+	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0))
-+		account_guest_time(p, cputime, cputime_scaled);
-+}
-+
-+/*
-+ * Account for involuntary wait time.
-+ * @steal: the cpu time spent in involuntary wait
-+ */
-+void account_steal_time(cputime_t cputime)
-+{
-+	u64 *cpustat = kcpustat_this_cpu->cpustat;
-+
-+	cpustat[CPUTIME_STEAL] += (__force u64)cputime;
-+}
-+
-+/*
-+ * Account for idle time.
-+ * @cputime: the cpu time spent in idle wait
-+ */
-+static void account_idle_times(cputime_t cputime)
-+{
-+	u64 *cpustat = kcpustat_this_cpu->cpustat;
-+	struct rq *rq = this_rq();
-+
-+	if (atomic_read(&rq->nr_iowait) > 0)
-+		cpustat[CPUTIME_IOWAIT] += (__force u64)cputime;
-+	else
-+		cpustat[CPUTIME_IDLE] += (__force u64)cputime;
-+}
-+
-+#ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-+
-+void account_process_tick(struct task_struct *p, int user_tick)
-+{
-+}
-+
-+/*
-+ * Account multiple ticks of steal time.
-+ * @p: the process from which the cpu time has been stolen
-+ * @ticks: number of stolen ticks
-+ */
-+void account_steal_ticks(unsigned long ticks)
-+{
-+	account_steal_time(jiffies_to_cputime(ticks));
-+}
-+
-+/*
-+ * Account multiple ticks of idle time.
-+ * @ticks: number of stolen ticks
-+ */
-+void account_idle_ticks(unsigned long ticks)
-+{
-+	account_idle_times(jiffies_to_cputime(ticks));
-+}
-+#endif
 +
 +/*
 + * Functions to test for when SCHED_ISO tasks have used their allocated
@@ -127295,6 +127885,8 @@ index 0000000000000000..b95292f140f09b3e
 +	 * allowed to run into the 2nd half of the next tick if they will
 +	 * run out of time slice in the interim. Otherwise, if they have
 +	 * less than RESCHED_US μs of time slice left they will be rescheduled.
++	 * Dither is used as a backup for when hrexpiry is disabled or high res
++	 * timers not configured in.
 +	 */
 +	if (p->time_slice - rq->dither >= RESCHED_US)
 +		return;
@@ -127303,6 +127895,60 @@ index 0000000000000000..b95292f140f09b3e
 +	__set_tsk_resched(p);
 +	rq_unlock(rq);
 +}
++
++#ifdef CONFIG_NO_HZ_FULL
++/*
++ * We can stop the timer tick any time highres timers are active since
++ * we rely entirely on highres timeouts for task expiry rescheduling.
++ */
++static void sched_stop_tick(struct rq *rq, int cpu)
++{
++	if (!hrexpiry_enabled(rq))
++		return;
++	if (!tick_nohz_full_enabled())
++		return;
++	if (!tick_nohz_full_cpu(cpu))
++		return;
++	tick_nohz_dep_clear_cpu(cpu, TICK_DEP_BIT_SCHED);
++}
++
++static inline void sched_start_tick(struct rq *rq, int cpu)
++{
++	tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
++}
++
++/**
++ * scheduler_tick_max_deferment
++ *
++ * Keep at least one tick per second when a single
++ * active task is running.
++ *
++ * This makes sure that uptime continues to move forward, even
++ * with a very low granularity.
++ *
++ * Return: Maximum deferment in nanoseconds.
++ */
++u64 scheduler_tick_max_deferment(void)
++{
++	struct rq *rq = this_rq();
++	unsigned long next, now = READ_ONCE(jiffies);
++
++	next = rq->last_jiffy + HZ;
++
++	if (time_before_eq(next, now))
++		return 0;
++
++	return jiffies_to_nsecs(next - now);
++}
++#else
++static inline void sched_stop_tick(struct rq *rq, int cpu)
++{
++}
++
++static inline void sched_start_tick(struct rq *rq, int cpu)
++{
++}
++#endif
 +
 +/*
 + * This function gets called by the timer code, with HZ frequency.
@@ -127314,7 +127960,7 @@ index 0000000000000000..b95292f140f09b3e
 +	struct rq *rq = cpu_rq(cpu);
 +
 +	sched_clock_tick();
-+	update_rq_clock(rq);
++	update_clocks(rq);
 +	update_load_avg(rq);
 +	update_cpu_clock_tick(rq, rq->curr);
 +	if (!rq_idle(rq))
@@ -127324,6 +127970,7 @@ index 0000000000000000..b95292f140f09b3e
 +	rq->last_scheduler_tick = rq->last_jiffy;
 +	rq->last_tick = rq->clock;
 +	perf_event_task_tick();
++	sched_stop_tick(rq, cpu);
 +}
 +
 +#if defined(CONFIG_PREEMPT) && (defined(CONFIG_DEBUG_PREEMPT) || \
@@ -127463,22 +128110,27 @@ index 0000000000000000..b95292f140f09b3e
 +static inline struct task_struct
 +*earliest_deadline_task(struct rq *rq, int cpu, struct task_struct *idle)
 +{
++	struct rq *locked = NULL, *chosen = NULL;
 +	struct task_struct *edt = idle;
-+	struct rq *locked = NULL;
 +	int i, best_entries = 0;
 +	u64 best_key = ~0ULL;
 +
 +	for (i = 0; i < num_possible_cpus(); i++) {
 +		struct rq *other_rq = rq_order(rq, i);
 +		int entries = other_rq->sl->entries;
-+		struct task_struct *p;
-+		u64 key;
++		skiplist_node *next;
 +
 +		/*
 +		 * Check for queued entres lockless first. The local runqueue
 +		 * is locked so entries will always be accurate.
 +		 */
 +		if (!sched_interactive) {
++			/*
++			 * Don't reschedule balance across nodes unless the CPU
++			 * is idle.
++			 */
++			if (edt != idle && rq->cpu_locality[other_rq->cpu] > 3)
++				break;
 +			if (entries <= best_entries)
 +				continue;
 +		} else if (!entries)
@@ -127500,35 +128152,47 @@ index 0000000000000000..b95292f140f09b3e
 +				continue;
 +			}
 +		}
-+		key = other_rq->node.next[0]->key;
-+		/* Reevaluate key after locking */
-+		if (unlikely(key >= best_key)) {
-+			if (i)
-+				unlock_rq(other_rq);
-+			continue;
-+		}
 +
-+		p = other_rq->node.next[0]->value;
-+		if (!smt_schedule(p, rq)) {
-+			if (i)
-+				unlock_rq(other_rq);
-+			continue;
-+		}
++		next = &other_rq->node;
++		/*
++		 * In interactive mode we check beyond the best entry on other
++		 * runqueues if we can't get the best for smt or affinity
++		 * reasons.
++		 */
++		while ((next = next->next[0]) != &other_rq->node) {
++			struct task_struct *p;
++			u64 key = next->key;
 +
-+		/* Make sure affinity is ok */
-+		if (i) {
-+			if (needs_other_cpu(p, cpu)) {
-+				unlock_rq(other_rq);
++			/* Reevaluate key after locking */
++			if (key >= best_key)
++				break;
++
++			p = next->value;
++			if (!smt_schedule(p, rq)) {
++				if (i && !sched_interactive)
++					break;
 +				continue;
 +			}
-+			if (locked)
-+				unlock_rq(locked);
-+			locked = other_rq;
-+		}
 +
-+		best_entries = entries;
-+		best_key = key;
-+		edt = p;
++			/* Make sure affinity is ok */
++			if (i) {
++				if (needs_other_cpu(p, cpu)) {
++					if (sched_interactive)
++						continue;
++					break;
++				}
++				/* From this point on p is the best so far */
++				if (locked)
++					unlock_rq(locked);
++				chosen = locked = other_rq;
++			}
++			best_entries = entries;
++			best_key = key;
++			edt = p;
++			break;
++		}
++		if (i && other_rq != chosen)
++			unlock_rq(other_rq);
 +	}
 +
 +	if (likely(edt != idle))
@@ -127606,6 +128270,15 @@ index 0000000000000000..b95292f140f09b3e
 + */
 +static inline void set_rq_task(struct rq *rq, struct task_struct *p)
 +{
++	if (p == rq->idle || p->policy == SCHED_FIFO)
++		hrexpiry_clear(rq);
++	else
++		hrexpiry_start(rq, US_TO_NS(p->time_slice));
++	if (rq->clock - rq->last_tick > HALF_JIFFY_NS)
++		rq->dither = 0;
++	else
++		rq->dither = rq_dither(rq);
++
 +	rq->rq_deadline = p->deadline;
 +	rq->rq_prio = p->prio;
 +#ifdef CONFIG_SMT_NICE
@@ -127767,13 +128440,8 @@ index 0000000000000000..b95292f140f09b3e
 +				struct task_struct *to_wakeup;
 +
 +				to_wakeup = wq_worker_sleeping(prev);
-+				if (to_wakeup) {
-+					/* This shouldn't happen, but does */
-+					if (WARN_ONCE((to_wakeup == prev), "Waking up prev as worker\n"))
-+						deactivate = false;
-+					else
-+						try_to_wake_up_local(to_wakeup);
-+				}
++				if (to_wakeup)
++					try_to_wake_up_local(to_wakeup);
 +			}
 +		}
 +		switch_count = &prev->nvcsw;
@@ -127787,10 +128455,6 @@ index 0000000000000000..b95292f140f09b3e
 +	update_clocks(rq);
 +	niffies = rq->niffies;
 +	update_cpu_clock_switch(rq, prev);
-+	if (rq->clock - rq->last_tick > HALF_JIFFY_NS)
-+		rq->dither = 0;
-+	else
-+		rq->dither = HALF_JIFFY_US;
 +
 +	clear_tsk_need_resched(prev);
 +	clear_preempt_need_resched();
@@ -127801,15 +128465,15 @@ index 0000000000000000..b95292f140f09b3e
 +	}
 +
 +	next = earliest_deadline_task(rq, cpu, idle);
-+	if (likely(next->prio != PRIO_LIMIT)) {
++	if (likely(next->prio != PRIO_LIMIT))
 +		clear_cpuidle_map(cpu);
-+		next->last_ran = niffies;
-+	} else {
++	else {
 +		set_cpuidle_map(cpu);
 +		update_load_avg(rq);
 +	}
 +
 +	set_rq_task(rq, next);
++	next->last_ran = niffies;
 +
 +	if (likely(prev != next)) {
 +		/*
@@ -127821,14 +128485,18 @@ index 0000000000000000..b95292f140f09b3e
 +			check_siblings(rq);
 +		else
 +			wake_siblings(rq);
-+		rq->nr_switches++;
++		atomic64_inc(&grq.nr_switches);
 +		rq->curr = next;
 +		++*switch_count;
 +
 +		trace_sched_switch(preempt, prev, next);
-+		rq = context_switch(rq, prev, next); /* unlocks the rq */
-+	} else
-+		rq_unlock_irq(rq);
++		context_switch(rq, prev, next); /* unlocks the rq */
++	} else {
++		check_siblings(rq);
++		rq_unlock(rq);
++		do_pending_softirq(rq, next);
++		local_irq_enable();
++	}
 +}
 +
 +static inline void sched_submit_work(struct task_struct *tsk)
@@ -128830,13 +129498,11 @@ index 0000000000000000..b95292f140f09b3e
 +	struct task_struct *p;
 +	int retval;
 +
-+	get_online_cpus();
 +	rcu_read_lock();
 +
 +	p = find_process_by_pid(pid);
 +	if (!p) {
 +		rcu_read_unlock();
-+		put_online_cpus();
 +		return -ESRCH;
 +	}
 +
@@ -128893,7 +129559,6 @@ index 0000000000000000..b95292f140f09b3e
 +	free_cpumask_var(cpus_allowed);
 +out_put_task:
 +	put_task_struct(p);
-+	put_online_cpus();
 +	return retval;
 +}
 +
@@ -129414,8 +130079,12 @@ index 0000000000000000..b95292f140f09b3e
 +{
 +	__do_set_cpus_allowed(p, new_mask);
 +	if (needs_other_cpu(p, task_cpu(p))) {
++		struct rq *rq;
++
 +		set_task_cpu(p, valid_task_cpu(p));
++		rq = __task_rq_lock(p);
 +		resched_task(p);
++		__task_rq_unlock(rq);
 +	}
 +}
 +
@@ -129448,6 +130117,7 @@ index 0000000000000000..b95292f140f09b3e
 +	raw_spin_lock_irqsave(&idle->pi_lock, flags);
 +	raw_spin_lock(&rq->lock);
 +	idle->last_ran = rq->niffies;
++	time_slice_expired(idle, rq);
 +	idle->state = TASK_RUNNING;
 +	/* Setting prio to illegal value shouldn't matter when never queued */
 +	idle->prio = PRIO_LIMIT;
@@ -129482,6 +130152,7 @@ index 0000000000000000..b95292f140f09b3e
 +	init_idle_preempt_count(idle, cpu);
 +
 +	ftrace_graph_init_idle_task(idle, cpu);
++	vtime_init_idle(idle, cpu);
 +#ifdef CONFIG_SMP
 +	sprintf(idle->comm, "%s/%d", INIT_TASK_COMM, cpu);
 +#endif
@@ -129648,16 +130319,16 @@ index 0000000000000000..b95292f140f09b3e
 +				  const struct cpumask *new_mask, bool check)
 +{
 +	const struct cpumask *cpu_valid_mask = cpu_active_mask;
-+	bool running_wrong = false;
++	bool queued = false, running_wrong = false, kthread;
 +	struct cpumask old_mask;
-+	bool queued = false;
 +	unsigned long flags;
 +	struct rq *rq;
 +	int ret = 0;
 +
 +	rq = task_rq_lock(p, &flags);
 +
-+	if (p->flags & PF_KTHREAD) {
++	kthread = !!(p->flags & PF_KTHREAD);
++	if (kthread) {
 +		/*
 +		 * Kernel threads are allowed on online && !active CPUs
 +		 */
@@ -129686,7 +130357,7 @@ index 0000000000000000..b95292f140f09b3e
 +
 +	_do_set_cpus_allowed(p, new_mask);
 +
-+	if (p->flags & PF_KTHREAD) {
++	if (kthread) {
 +		/*
 +		 * For kernel threads that do indeed end up on online &&
 +		 * !active we want to ensure they are strict per-cpu threads.
@@ -129704,7 +130375,7 @@ index 0000000000000000..b95292f140f09b3e
 +		/* Task is running on the wrong cpu now, reschedule it. */
 +		if (rq == this_rq()) {
 +			set_tsk_need_resched(p);
-+			running_wrong = true;
++			running_wrong = kthread;
 +		} else
 +			resched_task(p);
 +	} else {
@@ -131246,6 +131917,8 @@ index 0000000000000000..b95292f140f09b3e
 +	}
 +	bind_zero(cpu);
 +	double_rq_unlock(rq, cpu_rq(0));
++	sched_start_tick(rq, cpu);
++	hrexpiry_clear(rq);
 +	local_irq_restore(flags);
 +
 +	return 0;
@@ -131270,7 +131943,7 @@ index 0000000000000000..b95292f140f09b3e
 +/* All this CPU's SMT siblings are idle */
 +static bool siblings_cpu_idle(struct rq *rq)
 +{
-+	return cpumask_subset(&rq->thread_mask, &cpu_idle_map);
++	return cpumask_subset(&rq->thread_mask, &grq.cpu_idle_map);
 +}
 +#endif
 +#ifdef CONFIG_SCHED_MC
@@ -131281,7 +131954,7 @@ index 0000000000000000..b95292f140f09b3e
 +/* All this CPU's shared cache siblings are idle */
 +static bool cache_cpu_idle(struct rq *rq)
 +{
-+	return cpumask_subset(&rq->core_mask, &cpu_idle_map);
++	return cpumask_subset(&rq->core_mask, &grq.cpu_idle_map);
 +}
 +#endif
 +
@@ -131416,6 +132089,7 @@ index 0000000000000000..b95292f140f09b3e
 +#else
 +void __init sched_init_smp(void)
 +{
++	sched_smp_initialized = true;
 +}
 +#endif /* CONFIG_SMP */
 +
@@ -131462,11 +132136,14 @@ index 0000000000000000..b95292f140f09b3e
 +	for (i = 1 ; i < NICE_WIDTH ; i++)
 +		prio_ratios[i] = prio_ratios[i - 1] * 11 / 10;
 +
++	atomic_set(&grq.nr_running, 0);
++	atomic_set(&grq.nr_uninterruptible, 0);
++	atomic64_set(&grq.nr_switches, 0);
 +	skiplist_node_init(&init_task.node);
 +
 +#ifdef CONFIG_SMP
 +	init_defrootdomain();
-+	cpumask_clear(&cpu_idle_map);
++	cpumask_clear(&grq.cpu_idle_map);
 +#else
 +	uprq = &per_cpu(runqueues, 0);
 +#endif
@@ -131480,7 +132157,6 @@ index 0000000000000000..b95292f140f09b3e
 +#endif /* CONFIG_CGROUP_SCHED */
 +	for_each_possible_cpu(i) {
 +		rq = cpu_rq(i);
-+		rq->nr_running = rq->nr_uninterruptible = rq->nr_switches = 0;
 +		skiplist_init(&rq->node);
 +		rq->sl = new_skiplist(&rq->node);
 +		raw_spin_lock_init(&rq->lock);
@@ -131499,6 +132175,7 @@ index 0000000000000000..b95292f140f09b3e
 +		rq->cpu = i;
 +		rq_attach_root(rq, &def_root_domain);
 +#endif
++		init_rq_hrexpiry(rq);
 +		atomic_set(&rq->nr_iowait, 0);
 +	}
 +
@@ -131706,199 +132383,6 @@ index 0000000000000000..b95292f140f09b3e
 +
 +#endif
 +
-+/*
-+ * Use precise platform statistics if available:
-+ */
-+#ifdef CONFIG_VIRT_CPU_ACCOUNTING
-+
-+#ifndef __ARCH_HAS_VTIME_TASK_SWITCH
-+void vtime_common_task_switch(struct task_struct *prev)
-+{
-+	if (is_idle_task(prev))
-+		vtime_account_idle(prev);
-+	else
-+		vtime_account_system(prev);
-+
-+#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-+	vtime_account_user(prev);
-+#endif
-+	arch_vtime_task_switch(prev);
-+}
-+#endif
-+
-+#endif /* CONFIG_VIRT_CPU_ACCOUNTING */
-+
-+#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-+void task_cputime_adjusted(struct task_struct *p, cputime_t *ut, cputime_t *st)
-+{
-+	*ut = p->utime;
-+	*st = p->stime;
-+}
-+EXPORT_SYMBOL_GPL(task_cputime_adjusted);
-+
-+void thread_group_cputime_adjusted(struct task_struct *p, cputime_t *ut, cputime_t *st)
-+{
-+	struct task_cputime cputime;
-+
-+	thread_group_cputime(p, &cputime);
-+
-+	*ut = cputime.utime;
-+	*st = cputime.stime;
-+}
-+
-+void vtime_account_system_irqsafe(struct task_struct *tsk)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	vtime_account_system(tsk);
-+	local_irq_restore(flags);
-+}
-+EXPORT_SYMBOL_GPL(vtime_account_system_irqsafe);
-+
-+/*
-+ * Archs that account the whole time spent in the idle task
-+ * (outside irq) as idle time can rely on this and just implement
-+ * vtime_account_system() and vtime_account_idle(). Archs that
-+ * have other meaning of the idle time (s390 only includes the
-+ * time spent by the CPU when it's in low power mode) must override
-+ * vtime_account().
-+ */
-+#ifndef __ARCH_HAS_VTIME_ACCOUNT
-+void vtime_account_irq_enter(struct task_struct *tsk)
-+{
-+	if (!in_interrupt() && is_idle_task(tsk))
-+		vtime_account_idle(tsk);
-+	else
-+		vtime_account_system(tsk);
-+}
-+EXPORT_SYMBOL_GPL(vtime_account_irq_enter);
-+#endif /* __ARCH_HAS_VTIME_ACCOUNT */
-+
-+#else /* CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
-+/*
-+ * Perform (stime * rtime) / total, but avoid multiplication overflow by
-+ * losing precision when the numbers are big.
-+ */
-+static cputime_t scale_stime(u64 stime, u64 rtime, u64 total)
-+{
-+	u64 scaled;
-+
-+	for (;;) {
-+		/* Make sure "rtime" is the bigger of stime/rtime */
-+		if (stime > rtime) {
-+			u64 tmp = rtime; rtime = stime; stime = tmp;
-+		}
-+
-+		/* Make sure 'total' fits in 32 bits */
-+		if (total >> 32)
-+			goto drop_precision;
-+
-+		/* Does rtime (and thus stime) fit in 32 bits? */
-+		if (!(rtime >> 32))
-+			break;
-+
-+		/* Can we just balance rtime/stime rather than dropping bits? */
-+		if (stime >> 31)
-+			goto drop_precision;
-+
-+		/* We can grow stime and shrink rtime and try to make them both fit */
-+		stime <<= 1;
-+		rtime >>= 1;
-+		continue;
-+
-+drop_precision:
-+		/* We drop from rtime, it has more bits than stime */
-+		rtime >>= 1;
-+		total >>= 1;
-+	}
-+
-+	/*
-+	 * Make sure gcc understands that this is a 32x32->64 multiply,
-+	 * followed by a 64/32->64 divide.
-+	 */
-+	scaled = div_u64((u64) (u32) stime * (u64) (u32) rtime, (u32)total);
-+	return (__force cputime_t) scaled;
-+}
-+
-+/*
-+ * Adjust tick based cputime random precision against scheduler
-+ * runtime accounting.
-+ */
-+static void cputime_adjust(struct task_cputime *curr,
-+			   struct prev_cputime *prev,
-+			   cputime_t *ut, cputime_t *st)
-+{
-+	cputime_t rtime, stime, utime, total;
-+
-+	stime = curr->stime;
-+	total = stime + curr->utime;
-+
-+	/*
-+	 * Tick based cputime accounting depend on random scheduling
-+	 * timeslices of a task to be interrupted or not by the timer.
-+	 * Depending on these circumstances, the number of these interrupts
-+	 * may be over or under-optimistic, matching the real user and system
-+	 * cputime with a variable precision.
-+	 *
-+	 * Fix this by scaling these tick based values against the total
-+	 * runtime accounted by the CFS scheduler.
-+	 */
-+	rtime = nsecs_to_cputime(curr->sum_exec_runtime);
-+
-+	/*
-+	 * Update userspace visible utime/stime values only if actual execution
-+	 * time is bigger than already exported. Note that can happen, that we
-+	 * provided bigger values due to scaling inaccuracy on big numbers.
-+	 */
-+	if (prev->stime + prev->utime >= rtime)
-+		goto out;
-+
-+	if (total) {
-+		stime = scale_stime((__force u64)stime,
-+				    (__force u64)rtime, (__force u64)total);
-+		utime = rtime - stime;
-+	} else {
-+		stime = rtime;
-+		utime = 0;
-+	}
-+
-+	/*
-+	 * If the tick based count grows faster than the scheduler one,
-+	 * the result of the scaling may go backward.
-+	 * Let's enforce monotonicity.
-+	 */
-+	prev->stime = max(prev->stime, stime);
-+	prev->utime = max(prev->utime, utime);
-+
-+out:
-+	*ut = prev->utime;
-+	*st = prev->stime;
-+}
-+
-+void task_cputime_adjusted(struct task_struct *p, cputime_t *ut, cputime_t *st)
-+{
-+	struct task_cputime cputime = {
-+		.sum_exec_runtime = tsk_seruntime(p),
-+	};
-+
-+	task_cputime(p, &cputime.utime, &cputime.stime);
-+	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
-+}
-+EXPORT_SYMBOL_GPL(task_cputime_adjusted);
-+
-+/*
-+ * Must be called with siglock held.
-+ */
-+void thread_group_cputime_adjusted(struct task_struct *p, cputime_t *ut, cputime_t *st)
-+{
-+	struct task_cputime cputime;
-+
-+	thread_group_cputime(p, &cputime);
-+	cputime_adjust(&cputime, &p->signal->prev_cputime, ut, st);
-+}
-+#endif /* CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
-+
 +void init_idle_bootup_task(struct task_struct *idle)
 +{}
 +
@@ -132038,14 +132522,16 @@ index 0000000000000000..b95292f140f09b3e
 +#endif	/* CONFIG_CGROUP_SCHED */
 diff --git a/kernel/sched/MuQSS.h b/kernel/sched/MuQSS.h
 new file mode 100644
-index 0000000000000000..10a12b33567f09af
+index 0000000000000000..3565a7d8a5eefa0a
 --- /dev/null
 +++ b/kernel/sched/MuQSS.h
-@@ -0,0 +1,277 @@
+@@ -0,0 +1,343 @@
 +#include <linux/sched.h>
 +#include <linux/cpuidle.h>
++#include <linux/interrupt.h>
 +#include <linux/skip_list.h>
 +#include <linux/stop_machine.h>
++#include "cpuacct.h"
 +
 +#ifndef MUQSS_SCHED_H
 +#define MUQSS_SCHED_H
@@ -132061,9 +132547,6 @@ index 0000000000000000..10a12b33567f09af
 +struct rq {
 +	struct task_struct *curr, *idle, *stop;
 +	struct mm_struct *prev_mm;
-+	long nr_uninterruptible;
-+	s64 nr_switches;
-+	int nr_running;
 +
 +	raw_spinlock_t lock;
 +
@@ -132131,6 +132614,10 @@ index 0000000000000000..10a12b33567f09af
 +
 +	int iso_ticks;
 +	bool iso_refractory;
++
++#ifdef CONFIG_HIGH_RES_TIMERS
++	struct hrtimer hrexpiry_timer;
++#endif
 +
 +#ifdef CONFIG_SCHEDSTATS
 +
@@ -132291,6 +132778,55 @@ index 0000000000000000..10a12b33567f09af
 +}
 +#endif
 +
++#ifdef CONFIG_IRQ_TIME_ACCOUNTING
++
++DECLARE_PER_CPU(u64, cpu_hardirq_time);
++DECLARE_PER_CPU(u64, cpu_softirq_time);
++
++#ifndef CONFIG_64BIT
++DECLARE_PER_CPU(seqcount_t, irq_time_seq);
++
++static inline void irq_time_write_begin(void)
++{
++	__this_cpu_inc(irq_time_seq.sequence);
++	smp_wmb();
++}
++
++static inline void irq_time_write_end(void)
++{
++	smp_wmb();
++	__this_cpu_inc(irq_time_seq.sequence);
++}
++
++static inline u64 irq_time_read(int cpu)
++{
++	u64 irq_time;
++	unsigned seq;
++
++	do {
++		seq = read_seqcount_begin(&per_cpu(irq_time_seq, cpu));
++		irq_time = per_cpu(cpu_softirq_time, cpu) +
++			   per_cpu(cpu_hardirq_time, cpu);
++	} while (read_seqcount_retry(&per_cpu(irq_time_seq, cpu), seq));
++
++	return irq_time;
++}
++#else /* CONFIG_64BIT */
++static inline void irq_time_write_begin(void)
++{
++}
++
++static inline void irq_time_write_end(void)
++{
++}
++
++static inline u64 irq_time_read(int cpu)
++{
++	return per_cpu(cpu_softirq_time, cpu) + per_cpu(cpu_hardirq_time, cpu);
++}
++#endif /* CONFIG_64BIT */
++#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
++
 +#ifdef CONFIG_CPU_FREQ
 +DECLARE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
 +
@@ -132317,6 +132853,20 @@ index 0000000000000000..10a12b33567f09af
 +#else /* arch_scale_freq_capacity */
 +#define arch_scale_freq_invariant()	(false)
 +#endif
++
++/*
++ * This should only be called when current == rq->idle. Dodgy workaround for
++ * when softirqs are pending and we are in the idle loop. Setting current to
++ * resched will kick us out of the idle loop and the softirqs will be serviced
++ * on our next pass through schedule().
++ */
++static inline bool softirq_pending(int cpu)
++{
++	if (likely(!local_softirq_pending()))
++		return false;
++	set_tsk_need_resched(current);
++	return true;
++}
 +
 +#endif /* MUQSS_SCHED_H */
 diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
@@ -132351,8 +132901,34 @@ index a84641b222c1b476..a2bf1ea69bee49b0 100644
  
  struct sugov_tunables {
  	struct gov_attr_set attr_set;
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index a846cf89eb961829..f09077a45a4cc968 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -4,7 +4,12 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/static_key.h>
+ #include <linux/context_tracking.h>
++#ifdef CONFIG_SCHED_MUQSS
++#include "MuQSS.h"
++#include "stats.h"
++#else
+ #include "sched.h"
++#endif
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/paravirt.h>
+ #endif
+@@ -671,7 +676,7 @@ out:
+ void task_cputime_adjusted(struct task_struct *p, cputime_t *ut, cputime_t *st)
+ {
+ 	struct task_cputime cputime = {
+-		.sum_exec_runtime = p->se.sum_exec_runtime,
++		.sum_exec_runtime = tsk_seruntime(p),
+ 	};
+ 
+ 	task_cputime(p, &cputime.utime, &cputime.stime);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 039de34f15216d19..157cf8363e169387 100644
+index 8b3610c871f201d1..c8d96a5cdd5a579e 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -47,8 +47,13 @@
@@ -132424,7 +133000,7 @@ index 039de34f15216d19..157cf8363e169387 100644
  static inline void update_load_add(struct load_weight *lw, unsigned long inc)
  {
 diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 9fb873cfc75cfb33..060b76d854eccaf5 100644
+index 9fb873cfc75cfb33..51264e6b120e84d7 100644
 --- a/kernel/sched/idle.c
 +++ b/kernel/sched/idle.c
 @@ -14,7 +14,11 @@
@@ -132439,6 +133015,50 @@ index 9fb873cfc75cfb33..060b76d854eccaf5 100644
  
  /**
   * sched_idle_set_state - Record idle state for the current CPU.
+@@ -204,6 +208,8 @@ static void cpu_idle_loop(void)
+ 	int cpu = smp_processor_id();
+ 
+ 	while (1) {
++		bool pending = false;
++
+ 		/*
+ 		 * If the arch has a polling bit, we maintain an invariant:
+ 		 *
+@@ -215,7 +221,10 @@ static void cpu_idle_loop(void)
+ 
+ 		__current_set_polling();
+ 		quiet_vmstat();
+-		tick_nohz_idle_enter();
++		if (unlikely(softirq_pending(cpu)))
++			pending = true;
++		else
++			tick_nohz_idle_enter();
+ 
+ 		while (!need_resched()) {
+ 			check_pgt_cache();
+@@ -255,7 +264,8 @@ static void cpu_idle_loop(void)
+ 		 * not have had an IPI to fold the state for us.
+ 		 */
+ 		preempt_set_need_resched();
+-		tick_nohz_idle_exit();
++		if (!pending)
++			tick_nohz_idle_exit();
+ 		__current_clr_polling();
+ 
+ 		/*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c64fc5114004f6a8..cdefab6df1242ee1 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1813,3 +1813,8 @@ static inline void cpufreq_trigger_update(u64 time) {}
+ #else /* arch_scale_freq_capacity */
+ #define arch_scale_freq_invariant()	(false)
+ #endif
++
++static inline bool softirq_pending(int cpu)
++{
++	return false;
++}
 diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
 index 87e2c9f0c33e7470..ba7b137c3ed744d3 100644
 --- a/kernel/sched/stats.c
@@ -132699,19 +133319,24 @@ index d513051fcca271e5..e056d5429783e3e2 100644
  	}
  }
 +EXPORT_SYMBOL_GPL(task_work_run);
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index 4008d9f95dd724de..10e18d267675e46d 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -89,7 +89,7 @@ config NO_HZ_IDLE
- config NO_HZ_FULL
- 	bool "Full dynticks system (tickless)"
- 	# NO_HZ_COMMON dependency
--	depends on !ARCH_USES_GETTIMEOFFSET && GENERIC_CLOCKEVENTS
-+	depends on !ARCH_USES_GETTIMEOFFSET && GENERIC_CLOCKEVENTS && !SCHED_MUQSS
- 	# We need at least one periodic CPU for timekeeping
- 	depends on SMP
- 	depends on HAVE_CONTEXT_TRACKING
+diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
+index 2c5bc77c0bb004fa..b96deed549e83730 100644
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -198,8 +198,13 @@ int clockevents_tick_resume(struct clock_event_device *dev)
+ 
+ #ifdef CONFIG_GENERIC_CLOCKEVENTS_MIN_ADJUST
+ 
++#ifdef CONFIG_SCHED_MUQSS
++/* Limit min_delta to 100us */
++#define MIN_DELTA_LIMIT		(NSEC_PER_SEC / 10000)
++#else
+ /* Limit min_delta to a jiffie */
+ #define MIN_DELTA_LIMIT		(NSEC_PER_SEC / HZ)
++#endif
+ 
+ /**
+  * clockevents_increase_min_delta - raise minimum delta of a clock event device
 diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
 index 39008d78927acb4f..784f3a1752d18fe8 100644
 --- a/kernel/time/posix-cpu-timers.c
@@ -132761,6 +133386,38 @@ index 39008d78927acb4f..784f3a1752d18fe8 100644
  		if (task_cputime_expired(&task_sample, &tsk->cputime_expires))
  			return 1;
  	}
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 96db64bdedbbe87c..e2e71587f91a600f 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1464,7 +1464,7 @@ static unsigned long __next_timer_interrupt(struct timer_base *base)
+  * Check, if the next hrtimer event is before the next timer wheel
+  * event:
+  */
+-static u64 cmp_next_hrtimer_event(u64 basem, u64 expires)
++static u64 cmp_next_hrtimer_event(struct timer_base *base, u64 basem, u64 expires)
+ {
+ 	u64 nextevt = hrtimer_get_next_event();
+ 
+@@ -1482,6 +1482,9 @@ static u64 cmp_next_hrtimer_event(u64 basem, u64 expires)
+ 	if (nextevt <= basem)
+ 		return basem;
+ 
++	if (nextevt < expires && nextevt - basem <= TICK_NSEC)
++		base->is_idle = false;
++
+ 	/*
+ 	 * Round up to the next jiffie. High resolution timers are
+ 	 * off, so the hrtimers are expired in the tick and we need to
+@@ -1545,7 +1548,7 @@ u64 get_next_timer_interrupt(unsigned long basej, u64 basem)
+ 	}
+ 	spin_unlock(&base->lock);
+ 
+-	return cmp_next_hrtimer_event(basem, expires);
++	return cmp_next_hrtimer_event(base, basem, expires);
+ }
+ 
+ /**
 diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
 index b0f86ea77881ecf3..69ee53a67680df96 100644
 --- a/kernel/trace/trace_selftest.c
@@ -132794,7 +133451,7 @@ index d79909dc01ec8365..c585e4c401436bc3 100644
 +
  endmenu
 diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cab7405f48d24f70..5b79f97861aba9d4 100644
+index cab7405f48d24f70..6f1b7a77e3890336 100644
 --- a/lib/Kconfig.debug
 +++ b/lib/Kconfig.debug
 @@ -924,7 +924,7 @@ config SCHED_INFO
@@ -132806,15 +133463,6 @@ index cab7405f48d24f70..5b79f97861aba9d4 100644
  	select SCHED_INFO
  	help
  	  If you say Y here, additional code will be inserted into the
-@@ -1323,7 +1323,7 @@ config RCU_PERF_TEST
- 
- config RCU_TORTURE_TEST
- 	tristate "torture tests for RCU"
--	depends on DEBUG_KERNEL
-+	depends on DEBUG_KERNEL && !SCHED_MUQSS
- 	select TORTURE_TEST
- 	select SRCU
- 	select TASKS_RCU
 @@ -1676,6 +1676,7 @@ config LATENCYTOP
  	depends on DEBUG_KERNEL
  	depends on STACKTRACE_SUPPORT
@@ -133545,10 +134193,10 @@ index 0000000000000000..257c7b099608f472
 +	}
 +}
 diff --git a/mm/Makefile b/mm/Makefile
-index 2ca1faf3fa09038f..6b9da3f902b2557d 100644
+index 295bd7a9f76bbb29..14fa1c83b5042f3b 100644
 --- a/mm/Makefile
 +++ b/mm/Makefile
-@@ -40,7 +40,7 @@ obj-y			:= filemap.o mempool.o oom_kill.o \
+@@ -37,7 +37,7 @@ obj-y			:= filemap.o mempool.o oom_kill.o \
  			   mm_init.o mmu_context.o percpu.o slab_common.o \
  			   compaction.o vmacache.o \
  			   interval_tree.o list_lru.o workingset.o \
@@ -133886,6 +134534,86 @@ index 50d6a9b49f6c7170..21a240aff2ef59c9 100644
  	default "westwood" if DEFAULT_WESTWOOD
  	default "veno" if DEFAULT_VENO
  	default "reno" if DEFAULT_RENO
+diff --git a/net/ipv6/icmp.c b/net/ipv6/icmp.c
+index 7370ad2e693a33d7..2772004ba5a18848 100644
+--- a/net/ipv6/icmp.c
++++ b/net/ipv6/icmp.c
+@@ -447,8 +447,10 @@ static void icmp6_send(struct sk_buff *skb, u8 type, u8 code, __u32 info,
+ 
+ 	if (__ipv6_addr_needs_scope_id(addr_type))
+ 		iif = skb->dev->ifindex;
+-	else
+-		iif = l3mdev_master_ifindex(skb_dst(skb)->dev);
++	else {
++		dst = skb_dst(skb);
++		iif = l3mdev_master_ifindex(dst ? dst->dev : skb->dev);
++	}
+ 
+ 	/*
+ 	 *	Must not send error if the source does not uniquely
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index d2238b204691b8e4..dd2332390c45bbff 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3648,19 +3648,25 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
+ 
+ 		if (optlen != sizeof(val))
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 		switch (val) {
+ 		case TPACKET_V1:
+ 		case TPACKET_V2:
+ 		case TPACKET_V3:
+-			po->tp_version = val;
+-			return 0;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->tp_version = val;
++			ret = 0;
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_RESERVE:
+ 	{
+@@ -4164,6 +4170,7 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
+ 	/* Added to avoid minimal code churn */
+ 	struct tpacket_req *req = &req_u->req;
+ 
++	lock_sock(sk);
+ 	/* Opening a Tx-ring is NOT supported in TPACKET_V3 */
+ 	if (!closing && tx_ring && (po->tp_version > TPACKET_V2)) {
+ 		net_warn_ratelimited("Tx-ring is not supported.\n");
+@@ -4245,7 +4252,6 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
+ 			goto out;
+ 	}
+ 
+-	lock_sock(sk);
+ 
+ 	/* Detach socket from network */
+ 	spin_lock(&po->bind_lock);
+@@ -4294,11 +4300,11 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
+ 		if (!tx_ring)
+ 			prb_shutdown_retire_blk_timer(po, rb_queue);
+ 	}
+-	release_sock(sk);
+ 
+ 	if (pg_vec)
+ 		free_pg_vec(pg_vec, order, req->tp_block_nr);
+ out:
++	release_sock(sk);
+ 	return err;
+ }
+ 
 diff --git a/scripts/mkcompile_h b/scripts/mkcompile_h
 index 6fdc97ef6023da95..2bf5dfaaad397d9d 100755
 --- a/scripts/mkcompile_h

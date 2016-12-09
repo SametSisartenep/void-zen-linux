@@ -4,7 +4,7 @@ version=4.8
 revision=1
 build_style=meta
 homepage="http://www.voidlinux.eu/"
-short_desc="The Linux kernel meta package"
+short_desc="The Zen Linux kernel meta package"
 maintainer="Juan RP <xtraeme@voidlinux.eu>"
 license="Public domain"
 
