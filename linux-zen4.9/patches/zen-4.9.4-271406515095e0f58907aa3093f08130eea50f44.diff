@@ -33,6 +33,7 @@
  block/blk-wbt.h                                  |   166 +
  block/cfq-iosched.c                              |    14 +
  drivers/cpufreq/cpufreq_ondemand.c               |     4 +
+ drivers/gpu/drm/drm_probe_helper.c               |    10 +-
  drivers/input/joydev.c                           |    37 +-
  drivers/input/mouse/synaptics.c                  |     4 +-
  drivers/input/mouse/synaptics.h                  |     1 +
@@ -146,7 +147,7 @@
  mm/page-writeback.c                              |     9 +
  net/ipv4/Kconfig                                 |     4 +
  scripts/mkcompile_h                              |     4 +-
- 148 files changed, 96638 insertions(+), 561 deletions(-)
+ 149 files changed, 96647 insertions(+), 562 deletions(-)
 
 diff --git a/Documentation/block/00-INDEX b/Documentation/block/00-INDEX
 index e55103ace382a093..8d55b4bbb5e2ef03 100644
@@ -1767,13 +1768,13 @@ index 0000000000000000..d037301094decdea
 +thinkpad_ec module and the H8S hardware documentation:
 +http://documentation.renesas.com/eng/products/mpumcu/rej09b0300_2140bhm.pdf
 diff --git a/Makefile b/Makefile
-index c9ce897465c5b183..d80edce16014a890 100644
+index 9175706bfe7f1207..6f5840fb06548f65 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,8 +1,8 @@
  VERSION = 4
  PATCHLEVEL = 9
- SUBLEVEL = 2
+ SUBLEVEL = 4
 -EXTRAVERSION =
 -NAME = Roaring Lionus
 +EXTRAVERSION = -zen
@@ -13158,6 +13159,28 @@ index 3a1f49f5f4c68ae4..39dbba7af42f4eee 100644
  #define MAX_SAMPLING_DOWN_FACTOR		(100000)
  #define MICRO_FREQUENCY_UP_THRESHOLD		(95)
  #define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)
+diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
+index f6b64d7d3528d742..975e7a6d120417ba 100644
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -143,8 +143,16 @@ void drm_kms_helper_poll_enable_locked(struct drm_device *dev)
+ 	}
+ 
+ 	if (dev->mode_config.delayed_event) {
++		/*
++		 * Use short (1s) delay to handle the initial delayed event.
++		 * This delay should not be needed, but Optimus/nouveau will
++		 * fail in a mysterious way if the delayed event is handled as
++		 * soon as possible like it is done in
++		 * drm_helper_probe_single_connector_modes() in case the poll
++		 * was enabled before.
++		 */
+ 		poll = true;
+-		delay = 0;
++		delay = HZ;
+ 	}
+ 
+ 	if (poll)
 diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
 index f3135ae22df429c7..b30ab7e7af4668d0 100644
 --- a/drivers/input/joydev.c
@@ -89547,7 +89570,7 @@ index 0000000000000000..a93fa46be04e8d6a
 +
 +#define EXFAT_VERSION  "1.2.9"
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9ae194fd2fdb81cb..f86df4f19a646d4c 100644
+index 14db4b7120214198..2cc48bf2b08bc3e6 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
 @@ -1251,7 +1251,7 @@ static int f2fs_write_data_page(struct page *page,
@@ -89635,7 +89658,7 @@ index ca651ac00660889a..ee394c813478bd75 100644
  		   task->sched_info.pcount);
  
 diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 3e57a56cf8294770..59e836805766c57d 100644
+index 2693ba84ec254107..d2c7cdcc07a06bcf 100644
 --- a/fs/xfs/xfs_aops.c
 +++ b/fs/xfs/xfs_aops.c
 @@ -495,8 +495,8 @@ xfs_submit_ioend(
