@@ -32,7 +32,7 @@
  block/blk-wbt.c                                  |   704 +
  block/blk-wbt.h                                  |   166 +
  block/cfq-iosched.c                              |    14 +
- drivers/cpufreq/cpufreq_ondemand.c               |     4 +
+ drivers/cpufreq/cpufreq_ondemand.c               |    20 +-
  drivers/gpu/drm/drm_probe_helper.c               |    10 +-
  drivers/input/joydev.c                           |    37 +-
  drivers/input/mouse/synaptics.c                  |     4 +-
@@ -120,7 +120,7 @@
  include/trace/events/wbt.h                       |   153 +
  include/uapi/linux/sched.h                       |     9 +-
  include/uapi/linux/vt.h                          |    15 +-
- init/Kconfig                                     |    61 +-
+ init/Kconfig                                     |    62 +-
  init/main.c                                      |     3 +-
  kernel/Makefile                                  |     2 +-
  kernel/delayacct.c                               |     2 +-
@@ -147,7 +147,7 @@
  mm/page-writeback.c                              |     9 +
  net/ipv4/Kconfig                                 |     4 +
  scripts/mkcompile_h                              |     4 +-
- 149 files changed, 96647 insertions(+), 562 deletions(-)
+ 149 files changed, 96660 insertions(+), 566 deletions(-)
 
 diff --git a/Documentation/block/00-INDEX b/Documentation/block/00-INDEX
 index e55103ace382a093..8d55b4bbb5e2ef03 100644
@@ -1768,13 +1768,13 @@ index 0000000000000000..d037301094decdea
 +thinkpad_ec module and the H8S hardware documentation:
 +http://documentation.renesas.com/eng/products/mpumcu/rej09b0300_2140bhm.pdf
 diff --git a/Makefile b/Makefile
-index 9175706bfe7f1207..6f5840fb06548f65 100644
+index ef95231d16259741..d0e84e3138a08a4f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,8 +1,8 @@
  VERSION = 4
  PATCHLEVEL = 9
- SUBLEVEL = 4
+ SUBLEVEL = 6
 -EXTRAVERSION =
 -NAME = Roaring Lionus
 +EXTRAVERSION = -zen
@@ -11526,7 +11526,7 @@ index 01fb455d3377472c..633c79a538ea42c2 100644
  };
  
 diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ad459e4e80717dd6..2356af37c0a401ee 100644
+index 81caceb96c3c1c44..9dddd9916aa4682d 100644
 --- a/block/blk-mq.c
 +++ b/block/blk-mq.c
 @@ -30,6 +30,8 @@
@@ -11593,7 +11593,7 @@ index ad459e4e80717dd6..2356af37c0a401ee 100644
  
  	if (test_and_clear_bit(REQ_ATOM_STARTED, &rq->atomic_flags)) {
  		if (q->dma_drain_size && blk_rq_bytes(rq))
-@@ -1273,6 +1291,7 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+@@ -1271,6 +1289,7 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
  	struct blk_plug *plug;
  	struct request *same_queue_rq = NULL;
  	blk_qc_t cookie;
@@ -11601,7 +11601,7 @@ index ad459e4e80717dd6..2356af37c0a401ee 100644
  
  	blk_queue_bounce(q, &bio);
  
-@@ -1287,9 +1306,15 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+@@ -1285,9 +1304,15 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
  	    blk_attempt_plug_merge(q, bio, &request_count, &same_queue_rq))
  		return BLK_QC_T_NONE;
  
@@ -11618,7 +11618,7 @@ index ad459e4e80717dd6..2356af37c0a401ee 100644
  
  	cookie = blk_tag_to_qc_t(rq->tag, data.hctx->queue_num);
  
-@@ -1366,6 +1391,7 @@ static blk_qc_t blk_sq_make_request(struct request_queue *q, struct bio *bio)
+@@ -1364,6 +1389,7 @@ static blk_qc_t blk_sq_make_request(struct request_queue *q, struct bio *bio)
  	struct blk_map_ctx data;
  	struct request *rq;
  	blk_qc_t cookie;
@@ -11626,7 +11626,7 @@ index ad459e4e80717dd6..2356af37c0a401ee 100644
  
  	blk_queue_bounce(q, &bio);
  
-@@ -1382,9 +1408,15 @@ static blk_qc_t blk_sq_make_request(struct request_queue *q, struct bio *bio)
+@@ -1380,9 +1406,15 @@ static blk_qc_t blk_sq_make_request(struct request_queue *q, struct bio *bio)
  	} else
  		request_count = blk_plug_queued_count(q);
  
@@ -11643,7 +11643,7 @@ index ad459e4e80717dd6..2356af37c0a401ee 100644
  
  	cookie = blk_tag_to_qc_t(rq->tag, data.hctx->queue_num);
  
-@@ -1723,6 +1755,8 @@ static void blk_mq_init_cpu_queues(struct request_queue *q,
+@@ -1721,6 +1753,8 @@ static void blk_mq_init_cpu_queues(struct request_queue *q,
  		spin_lock_init(&__ctx->lock);
  		INIT_LIST_HEAD(&__ctx->rq_list);
  		__ctx->queue = q;
@@ -11652,7 +11652,7 @@ index ad459e4e80717dd6..2356af37c0a401ee 100644
  
  		/* If the cpu isn't online, the cpu is mapped to first hctx */
  		if (!cpu_online(i))
-@@ -2053,6 +2087,9 @@ void blk_mq_free_queue(struct request_queue *q)
+@@ -2051,6 +2085,9 @@ void blk_mq_free_queue(struct request_queue *q)
  	list_del_init(&q->all_q_node);
  	mutex_unlock(&all_q_mutex);
  
@@ -13102,7 +13102,7 @@ index 0000000000000000..7af89682b512a9ff
 +
 +#endif
 diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
-index 5e24d880306c2aa3..b879a1a5f2d5a8d1 100644
+index 3ab6807773eeb8e0..1be81bb204b7e316 100644
 --- a/block/cfq-iosched.c
 +++ b/block/cfq-iosched.c
 @@ -16,6 +16,7 @@
@@ -13144,21 +13144,38 @@ index 5e24d880306c2aa3..b879a1a5f2d5a8d1 100644
  	 * group upon arrival of fresh requests.
  	 */
 diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq_ondemand.c
-index 3a1f49f5f4c68ae4..39dbba7af42f4eee 100644
+index 3a1f49f5f4c68ae4..98db468425245dde 100644
 --- a/drivers/cpufreq/cpufreq_ondemand.c
 +++ b/drivers/cpufreq/cpufreq_ondemand.c
-@@ -21,7 +21,11 @@
+@@ -20,12 +20,24 @@
+ #include "cpufreq_ondemand.h"
  
  /* On-demand governor macros */
- #define DEF_FREQUENCY_UP_THRESHOLD		(80)
-+#ifdef CONFIG_ZEN_INTERACTIVE
-+#define DEF_SAMPLING_DOWN_FACTOR		(10)
+-#define DEF_FREQUENCY_UP_THRESHOLD		(80)
+-#define DEF_SAMPLING_DOWN_FACTOR		(1)
++#if defined(CONFIG_ZEN_INTERACTIVE) && defined(CONFIG_SCHED_MUQSS)
++	#define DEF_FREQUENCY_UP_THRESHOLD	(45)
++	#define MICRO_FREQUENCY_UP_THRESHOLD	(45)
++	#define MIN_FREQUENCY_UP_THRESHOLD	(6)
++	#define DEF_SAMPLING_DOWN_FACTOR	(10)
++#elif defined(CONFIG_ZEN_INTERACTIVE)
++	#define DEF_FREQUENCY_UP_THRESHOLD	(80)
++	#define MICRO_FREQUENCY_UP_THRESHOLD	(95)
++	#define MIN_FREQUENCY_UP_THRESHOLD	(11)
++	#define DEF_SAMPLING_DOWN_FACTOR	(10)
 +#else
- #define DEF_SAMPLING_DOWN_FACTOR		(1)
++	#define DEF_FREQUENCY_UP_THRESHOLD	(80)
++	#define MICRO_FREQUENCY_UP_THRESHOLD	(95)
++	#define MIN_FREQUENCY_UP_THRESHOLD	(11)
++	#define DEF_SAMPLING_DOWN_FACTOR	(1)
 +#endif
  #define MAX_SAMPLING_DOWN_FACTOR		(100000)
- #define MICRO_FREQUENCY_UP_THRESHOLD		(95)
+-#define MICRO_FREQUENCY_UP_THRESHOLD		(95)
  #define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)
+-#define MIN_FREQUENCY_UP_THRESHOLD		(11)
+ #define MAX_FREQUENCY_UP_THRESHOLD		(100)
+ 
+ static struct od_ops od_ops;
 diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
 index f6b64d7d3528d742..975e7a6d120417ba 100644
 --- a/drivers/gpu/drm/drm_probe_helper.c
@@ -89658,7 +89675,7 @@ index ca651ac00660889a..ee394c813478bd75 100644
  		   task->sched_info.pcount);
  
 diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 2693ba84ec254107..d2c7cdcc07a06bcf 100644
+index 06763f5cc7018662..33a9e0b6fb04c922 100644
 --- a/fs/xfs/xfs_aops.c
 +++ b/fs/xfs/xfs_aops.c
 @@ -495,8 +495,8 @@ xfs_submit_ioend(
@@ -89746,7 +89763,7 @@ index cd395ecec99d0151..cb5d746001d578bc 100644
 +
  #endif /* __LINUX_BLK_TYPES_H */
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index c47c358ba0529c71..10836fafcd643917 100644
+index f6a816129856463b..1907f2e6afaff9aa 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
 @@ -37,15 +37,20 @@ struct bsg_job;
@@ -90538,10 +90555,10 @@ index f69034887e687d3a..18db2755a27c2686 100644
  		   consoles 16 and higher (since it returns a short) */
  
 diff --git a/init/Kconfig b/init/Kconfig
-index 34407f15e6d34da5..6bfe1b6ae6419900 100644
+index 34407f15e6d34da5..12adb92f9ac0c322 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -38,6 +38,47 @@ config THREAD_INFO_IN_TASK
+@@ -38,6 +38,48 @@ config THREAD_INFO_IN_TASK
  
  menu "General setup"
  
@@ -90576,20 +90593,21 @@ index 34407f15e6d34da5..6bfe1b6ae6419900 100644
 +	    Wakeup granularity.............:   1    ->   0.5  ms
 +	    CPU migration cost.............:   0.5  ->   0.25 ms
 +	    Bandwidth slice size...........:   5    ->   3    ms
++	    Ondemand downscaling factor....:   1    ->  10
 +
 +	  --- CPU Scheduler (MuQSS) ------------------------------
 +
 +	    Scheduling interval............:   6    ->   3    ms
 +	    ISO task max realtime use......:  70 %  ->  25 %
-+
-+	  --- CPU Frequency Scaling ------------------------------
-+
-+	    Ondemand down scaling factor...:   1    ->  10
++	    Ondemand coarse upscaling limit:  80 %  ->  45 %
++	    Ondemand fine upscaling limit..:  95 %  ->  45 %
++	    Ondemand min upscaling limit...:  11 %  ->   6 %
++	    Ondemand downscaling factor....:   1    ->  10
 +
  config BROKEN
  	bool
  
-@@ -550,7 +591,7 @@ config CONTEXT_TRACKING
+@@ -550,7 +592,7 @@ config CONTEXT_TRACKING
  config CONTEXT_TRACKING_FORCE
  	bool "Force context tracking"
  	depends on CONTEXT_TRACKING
@@ -90598,7 +90616,7 @@ index 34407f15e6d34da5..6bfe1b6ae6419900 100644
  	help
  	  The major pre-requirement for full dynticks to work is to
  	  support the context tracking subsystem. But there are also
-@@ -940,6 +981,7 @@ config NUMA_BALANCING
+@@ -940,6 +982,7 @@ config NUMA_BALANCING
  	depends on ARCH_SUPPORTS_NUMA_BALANCING
  	depends on !ARCH_WANT_NUMA_VARIABLE_LOCALITY
  	depends on SMP && NUMA && MIGRATION
@@ -90606,7 +90624,7 @@ index 34407f15e6d34da5..6bfe1b6ae6419900 100644
  	help
  	  This option adds support for automatic NUMA aware memory/task placement.
  	  The mechanism is quite primitive and is based on migrating memory when
-@@ -1042,9 +1084,13 @@ menuconfig CGROUP_SCHED
+@@ -1042,9 +1085,13 @@ menuconfig CGROUP_SCHED
  	help
  	  This feature lets CPU scheduler recognize task groups and control CPU
  	  bandwidth allocation to such task groups. It uses cgroups to group
@@ -90622,7 +90640,7 @@ index 34407f15e6d34da5..6bfe1b6ae6419900 100644
  config FAIR_GROUP_SCHED
  	bool "Group scheduling for SCHED_OTHER"
  	depends on CGROUP_SCHED
-@@ -1140,6 +1186,7 @@ config CGROUP_DEVICE
+@@ -1140,6 +1187,7 @@ config CGROUP_DEVICE
  
  config CGROUP_CPUACCT
  	bool "Simple CPU accounting controller"
@@ -90630,7 +90648,7 @@ index 34407f15e6d34da5..6bfe1b6ae6419900 100644
  	help
  	  Provides a simple controller for monitoring the
  	  total CPU consumed by the tasks in a cgroup.
-@@ -1238,6 +1285,7 @@ endif # NAMESPACES
+@@ -1238,6 +1286,7 @@ endif # NAMESPACES
  
  config SCHED_AUTOGROUP
  	bool "Automatic process group scheduling"
@@ -90638,7 +90656,7 @@ index 34407f15e6d34da5..6bfe1b6ae6419900 100644
  	select CGROUPS
  	select CGROUP_SCHED
  	select FAIR_GROUP_SCHED
-@@ -1331,6 +1379,13 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
+@@ -1331,6 +1380,13 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
  	  with the "-O2" compiler flag for best performance and most
  	  helpful compile-time warnings.
  

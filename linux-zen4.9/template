@@ -1,14 +1,14 @@
 # Template file for 'linux-zen4.9'
 pkgname=linux-zen4.9
-version=4.9.4
+version=4.9.6
 revision=1
 wrksrc="linux-${version}"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Rodrigo G. López <rodrigosloop@gmail.com>"
 homepage="http://www.kernel.org"
 license="GPL-2"
 short_desc="The Zen Linux kernel and modules (${version%.*} series)"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz"
-checksum=9bddafb64cb15a4d3d0400364f3c9cb4b0d777978d5d81ade70c155e86cec084
+checksum=f493af770a5b08a231178cbb27ab517369a81f6039625737aa8b36d69bcfce9b
 
 nocross=yes
 nodebug=yes
